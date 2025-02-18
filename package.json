@@ -1,7 +1,7 @@
 {
   "name": "@fjell/logging",
   "description": "Logging for Fjell",
-  "version": "4.2.7",
+  "version": "4.2.9",
   "license": "Apache-2.0",
   "main": "./dist/src/index.js",
   "type": "module",
@@ -13,19 +13,20 @@
     "test": "yarn run lint && yarn run jest --coverage"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.13",
-    "@typescript-eslint/eslint-plugin": "^7",
-    "@typescript-eslint/parser": "^7",
-    "concurrently": "^8.2.2",
-    "eslint": "^8.54.0",
+    "@types/jest": "^29.5.14",
+    "@typescript-eslint/eslint-plugin": "^8.24.1",
+    "@typescript-eslint/parser": "^8.24.1",
+    "concurrently": "^9.1.2",
+    "eslint": "^9.20.1",
     "jest": "^29.7.0",
-    "rimraf": "^5.0.5",
+    "rimraf": "^5.0.10",
     "ts-jest": "^29.2.5",
-    "tsc-alias": "^1.8.8",
-    "typescript": "^5.3.0"
+    "tsc-alias": "^1.8.10",
+    "typescript": "^5.7.3"
   },
   "dependencies": {
-    "flatted": "^3.3.2",
+    "@types/node": "^22.13.4",
+    "flatted": "^3.3.3",
     "ts-node": "^10.9.2"
   },
   "packageManager": "yarn@4.6.0",
