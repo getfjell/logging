@@ -1,4 +1,4 @@
-// eslint-disable @typescript-eslint/no-unused-expressions
+// eslint-disable no-unused-expressions
 import * as LogLevel from "./LogLevel";
 import * as LogFormat from "./LogFormat";
 import { createWriter } from "./Writer";
