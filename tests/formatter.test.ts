@@ -3,7 +3,7 @@ import { createFormatter, getStructuredFormatter, getTextFormatter } from '@/for
 import * as LogFormat from '@/LogFormat';
 import * as LogLevel from '@/LogLevel';
 import util from 'util';
-jest.mock('@fjellproject/logging', () => {
+jest.mock('@fjell/logging', () => {
   return {
     get: jest.fn().mockReturnThis(),
     getLogger: jest.fn().mockReturnThis(),

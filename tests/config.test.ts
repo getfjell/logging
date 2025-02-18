@@ -1,6 +1,6 @@
 import { configureLogging } from '@/config';
 import * as LogLevel from '@/LogLevel';
-jest.mock('@fjellproject/logging', () => {
+jest.mock('@fjell/logging', () => {
   return {
     get: jest.fn().mockReturnThis(),
     getLogger: jest.fn().mockReturnThis(),
