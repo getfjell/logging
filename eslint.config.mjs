@@ -25,6 +25,7 @@ export default [{
   },
 
   rules: {
+    "@typescript-eslint/no-unused-expressions": "off",
     "no-console": 0,
     "no-unused-vars": "off",
 
