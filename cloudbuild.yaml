@@ -1,0 +1,19 @@
+steps:
+  - name: "node:22"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        export NPM_TOKEN=${_NPM_TOKEN} &&
+        yarn set version stable &&
+        echo "INSTALLING DEPENDENCIES" &&
+        yarn install &&
+        echo "RUNNING BUILD" &&
+        yarn run build &&
+        echo "RUNNING TESTS" &&
+        yarn run test &&
+        echo "PUBLISHING PACKAGES" &&
+        yarn npm publish
+timeout: "1600s"
+options:
+  logging: CLOUD_LOGGING_ONLY

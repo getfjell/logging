@@ -1,7 +1,8 @@
 {
-  "name": "@getfjell/logging",
-  "version": "4.1.23",
-  "license": "UNLICENSED",
+  "name": "@fjell/logging",
+  "description": "Logging for Fjell",
+  "version": "4.2.3",
+  "license": "Apache-2.0",
   "main": "./dist/src/index.js",
   "exports": {
     ".": "./dist/src/index.js"
@@ -28,5 +29,10 @@
   },
   "dependencies": {
     "flatted": "^3.3.2"
+  },
+  "packageManager": "yarn@4.4.1",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/getfjell/logging.git"
   }
 }
