@@ -4,7 +4,7 @@ steps:
     args:
       - "-c"
       - |
-        export NPM_TOKEN=${_NPM_TOKEN} &&
+      	echo "SETTING VERSION STABLE" &&
         yarn set version stable &&
         echo "INSTALLING DEPENDENCIES" &&
         yarn install &&
@@ -14,6 +14,11 @@ steps:
         yarn run test &&
         echo "PUBLISHING PACKAGES" &&
         yarn npm publish
+    secretEnv: ["NPM_TOKEN"]
+availableSecrets:
+  secretManager:
+    - versionName: projects/$PROJECT_NUMBER/secrets/NPM_TOKEN/versions/latest
+      env: "NPM_TOKEN"
 timeout: "1600s"
 options:
   logging: CLOUD_LOGGING_ONLY
