@@ -4,6 +4,8 @@ steps:
     args:
       - "-c"
       - |
+        echo "Enable Corepack" &&
+        corepack enable &&
         echo "SETTING VERSION STABLE" &&
         yarn set version stable &&
         echo "INSTALLING DEPENDENCIES" &&
