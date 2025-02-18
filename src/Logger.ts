@@ -1,3 +1,4 @@
+// eslint-disable @typescript-eslint/no-unused-expressions
 import * as LogLevel from "./LogLevel";
 import * as LogFormat from "./LogFormat";
 import { createWriter } from "./Writer";
@@ -46,7 +47,6 @@ export const createLogger = (
       message: string,
       data: any[],
     }
-    // eslint-disable-next-line max-params
   ): TimeLogger => {
     const timerMessage = formatter.timerMessage(logLevel, coordinates, payload);
 
