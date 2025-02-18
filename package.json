@@ -1,7 +1,7 @@
 {
   "name": "@fjell/logging",
   "description": "Logging for Fjell",
-  "version": "4.2.5",
+  "version": "4.2.6",
   "license": "Apache-2.0",
   "main": "./dist/src/index.js",
   "exports": {
@@ -11,7 +11,7 @@
   "scripts": {
     "lint": "eslint .",
     "dev": "concurrently \"tsc --watch\" \"tsc-alias -w\"",
-    "build": "yarn run lint && tsc && tsc-alias -p tsconfig.json",
+    "build": "yarn run lint && tsc --build --verbose --force && tsc-alias -p tsconfig.json",
     "clean": "rimraf dist",
     "test": "yarn run lint && yarn run jest --coverage"
   },
