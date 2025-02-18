@@ -15,7 +15,7 @@ steps:
         echo "RUNNING TESTS" &&
         yarn run test &&
         echo "PUBLISHING PACKAGES" &&
-        yarn npm publish
+        yarn npm publish --access public
     secretEnv: ["NPM_TOKEN"]
 availableSecrets:
   secretManager:
