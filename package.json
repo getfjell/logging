@@ -1,12 +1,9 @@
 {
   "name": "@fjell/logging",
   "description": "Logging for Fjell",
-  "version": "4.2.6",
+  "version": "4.2.7",
   "license": "Apache-2.0",
   "main": "./dist/src/index.js",
-  "exports": {
-    ".": "./dist/src/index.js"
-  },
   "type": "module",
   "scripts": {
     "lint": "eslint .",
