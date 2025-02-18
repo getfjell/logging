@@ -1,0 +1,32 @@
+{
+  "name": "@getfjell/logging",
+  "version": "4.1.23",
+  "license": "UNLICENSED",
+  "main": "./dist/src/index.js",
+  "exports": {
+    ".": "./dist/src/index.js"
+  },
+  "type": "module",
+  "scripts": {
+    "lint": "eslint .",
+    "dev": "concurrently \"tsc --watch\" \"tsc-alias -w\"",
+    "build": "yarn run lint && tsc && tsc-alias -p tsconfig.json",
+    "clean": "rimraf dist",
+    "test": "yarn run lint && yarn run jest --coverage"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.13",
+    "@typescript-eslint/eslint-plugin": "^7",
+    "@typescript-eslint/parser": "^7",
+    "concurrently": "^8.2.2",
+    "eslint": "^8.54.0",
+    "jest": "^29.7.0",
+    "rimraf": "^5.0.5",
+    "ts-jest": "^29.2.5",
+    "tsc-alias": "^1.8.8",
+    "typescript": "^5.3.0"
+  },
+  "dependencies": {
+    "flatted": "^3.3.2"
+  }
+}
