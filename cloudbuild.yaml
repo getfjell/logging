@@ -4,17 +4,11 @@ steps:
     args:
       - "-c"
       - |
-        echo "Enable Corepack" &&
         corepack enable &&
-        echo "SETTING VERSION STABLE" &&
         yarn set version stable &&
-        echo "INSTALLING DEPENDENCIES" &&
         yarn install &&
-        echo "RUNNING BUILD" &&
         yarn run build &&
-        echo "RUNNING TESTS" &&
         yarn run test &&
-        echo "PUBLISHING PACKAGES" &&
         yarn npm publish --access public
     secretEnv: ["NPM_TOKEN"]
 availableSecrets:
