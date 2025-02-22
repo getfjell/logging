@@ -7,7 +7,7 @@
     "log",
     "fjell"
   ],
-  "version": "4.3.6",
+  "version": "4.3.7",
   "license": "Apache-2.0",
   "main": "./dist/src/index.js",
   "type": "module",

@@ -1,3 +1,6 @@
+![Licence](https://img.shields.io/github/license/getfjell/core.svg?style=plastic)
+
+
 Fjell Logging is just another logging library and it's designed to as straightforward as possible.
 
 ## Why another logging library?
