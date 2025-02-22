@@ -1,9 +1,5 @@
 import type { Config } from 'jest';
 
-const esModules = [
-  '@fjellproject',
-].join('|');
-
 const config: Config = {
   rootDir: '.',
   collectCoverageFrom: ['src/**/*.{ts,tsx}'],
@@ -29,10 +25,6 @@ const config: Config = {
   },
   testEnvironment: 'node',
   testRegex: '/tests/.*\\.(test|spec)?\\.(ts|tsx)$',
-  transform: {
-    '^.+\\.ts?$': ['ts-jest', { tsconfig: 'tsconfig.json' }],
-  },
-  transformIgnorePatterns: [`/node_modules/(?!${esModules})`],
 };
 
 export default config;
