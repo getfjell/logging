@@ -1,5 +1,6 @@
 ![Licence](https://img.shields.io/github/license/getfjell/core.svg?style=plastic)
-
+![GitHub language count](https://img.shields.io/github/languages/count/getfjell/core?style=plastic)
+![GitHub top language](https://img.shields.io/github/languages/top/getfjell/core?style=plastic)
 
 Fjell Logging is just another logging library and it's designed to as straightforward as possible.
 
