@@ -1,28 +1,15 @@
 {
+  "extends": "@tsconfig/recommended/tsconfig.json",
   "compilerOptions": {
-    "strict": true,
     "baseUrl": ".",
-    "moduleResolution": "node",
-    "esModuleInterop": true,
     "sourceMap": true,
     "outDir": "dist",
-    "declaration": true,
-    "lib": [
-      "DOM",
-      "ESNext"
-    ],
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "target": "ESNext",
-    "types": [
-      "jest",
-      "node"
-    ],
     "paths": {
       "@/*": [
         "./src/*"
       ]
-    }
+    },
+    "declaration": true
   },
   "include": [
     "./src/**/*.ts",

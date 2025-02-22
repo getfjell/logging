@@ -1,7 +1,7 @@
 {
   "name": "@fjell/logging",
   "description": "Logging for Fjell",
-  "version": "4.2.11",
+  "version": "4.2.12",
   "license": "Apache-2.0",
   "main": "./dist/src/index.js",
   "type": "module",
@@ -13,6 +13,7 @@
     "test": "yarn run lint && yarn run jest --coverage"
   },
   "devDependencies": {
+    "@tsconfig/recommended": "^1.0.8",
     "@types/jest": "^29.5.14",
     "@typescript-eslint/eslint-plugin": "^8.24.1",
     "@typescript-eslint/parser": "^8.24.1",
