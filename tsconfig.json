@@ -9,10 +9,13 @@
         "./src/*"
       ]
     },
-    "declaration": true
+    "declaration": true,
+    "module": "es2022",
+    "moduleResolution": "bundler"
   },
   "include": [
     "./src/**/*.ts",
+    "./tests/**/*.ts"
   ],
   "exclude": [
     "node_modules",
