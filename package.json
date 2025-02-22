@@ -1,7 +1,7 @@
 {
   "name": "@fjell/logging",
   "description": "Logging for Fjell",
-  "version": "4.3.3",
+  "version": "4.3.4",
   "license": "Apache-2.0",
   "main": "./dist/src/index.js",
   "type": "module",
