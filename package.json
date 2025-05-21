@@ -48,7 +48,7 @@
     "vite-plugin-node": "^5.0.1"
   },
   "dependencies": {
-    "flatted": "^3.3.3",
+    "flatted": "^3.3.3"
   },
   "packageManager": "pnpm@10.11.0",
   "repository": {
