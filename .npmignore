@@ -17,3 +17,5 @@ yarn.lock
 .github/
 .vscode/
 .yarn/
+vite.config.ts
+eslint.config.mjs
