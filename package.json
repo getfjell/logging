@@ -1,5 +1,6 @@
 {
   "name": "@fjell/logging",
+  "version": "4.4.0",
   "description": "Logging for Fjell",
   "keywords": [
     "logging",
@@ -7,7 +8,6 @@
     "log",
     "fjell"
   ],
-  "version": "4.4.0",
   "license": "Apache-2.0",
   "main": "./dist/src/index.js",
   "type": "module",
@@ -23,7 +23,8 @@
     "dev": "concurrently \"tsc --watch\" \"tsc-alias -w\"",
     "build": "tsc --noEmit && vite build",
     "clean": "rimraf dist",
-    "test": "pnpm run lint && jest --coverage"
+    "test": "pnpm run lint && jest --coverage",
+    "prepublishOnly": "pnpm run clean && pnpm run build"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
