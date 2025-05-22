@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import { VitePluginNode } from 'vite-plugin-node';
 import dts from 'vite-plugin-dts';
 import path from 'path';
+import { configDefaults } from 'vitest/config';
 
 export default defineConfig({
   server: {
@@ -51,5 +52,29 @@ export default defineConfig({
     modulePreload: false,
     minify: false,
     sourcemap: true
+  },
+  test: {
+    globals: true,
+    include: ['./tests/**/*.test.ts'],
+    environment: 'node',
+    coverage: {
+      provider: 'v8',
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: [
+        'node_modules/**',
+        'tests/**',
+        'src/index.ts',
+        ...configDefaults.exclude,
+      ],
+      thresholds: {
+        global: {
+          branches: 90,
+          functions: 100,
+          lines: 98,
+          statements: 98,
+        },
+      },
+      reportsDirectory: './coverage',
+    },
   },
 });
