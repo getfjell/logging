@@ -2,6 +2,20 @@
   "name": "@fjell/logging",
   "version": "4.4.2",
   "description": "Logging for Fjell",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
   "keywords": [
     "logging",
     "logger",
@@ -9,16 +23,6 @@
     "fjell"
   ],
   "license": "Apache-2.0",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
-  "type": "module",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "require": "./dist/index.cjs",
-      "import": "./dist/index.js"
-    }
-  },
   "scripts": {
     "lint": "eslint . --ext .ts --fix",
     "dev": "concurrently \"tsc --watch\" \"tsc-alias -w\"",

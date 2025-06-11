@@ -23,8 +23,8 @@ export default defineConfig({
     dts({
       entryRoot: 'src',
       outDir: 'dist',
-      exclude: ['./tests/**/*.ts'],
       include: ['./src/**/*.ts'],
+      exclude: ['./tests/**/*.ts'],
     }),
   ],
   resolve: {
@@ -37,10 +37,11 @@ export default defineConfig({
     outDir: 'dist',
     lib: {
       entry: './src/index.ts',
+      name: 'FjellLogging',
       formats: ['es', 'cjs'],
+      fileName: (format) => `index.${format === 'es' ? 'js' : 'cjs'}`
     },
     rollupOptions: {
-      input: 'src/index.ts',
       output: [
         {
           format: 'esm',
