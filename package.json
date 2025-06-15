@@ -7,10 +7,8 @@
   "module": "./dist/index.js",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
       "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
+      "import": "./dist/index.js"
     }
   },
   "files": [
@@ -25,8 +23,8 @@
   "license": "Apache-2.0",
   "scripts": {
     "lint": "eslint . --ext .ts --fix",
-    "dev": "concurrently \"tsc --watch\" \"tsc-alias -w\"",
-    "build": "tsc --noEmit && vite build",
+    "dev": "concurrently \"tsc --noEmit --watch\" \"vite build --watch\"",
+    "build": "pnpm run lint && tsc --noEmit && vite build",
     "clean": "rimraf dist",
     "test": "pnpm run lint && vitest run --coverage",
     "prepublishOnly": "pnpm run clean && pnpm run build"
