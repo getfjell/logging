@@ -1,11 +1,12 @@
 import { configureLogging } from '@/config';
 import * as LogLevel from '@/LogLevel';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('configureLogging', () => {
   const originalEnv = process.env;
 
   beforeEach(() => {
-    jest.resetModules();
+    vi.resetModules();
     process.env = { ...originalEnv };
   });
 
@@ -15,7 +16,7 @@ describe('configureLogging', () => {
 
   it('should throw error when invalid LOG_FORMAT is provided', () => {
     process.env.LOG_FORMAT = 'INVALID_FORMAT';
-    
+
     expect(() => {
       configureLogging();
     }).toThrow("Invalid Log Format Supplied to Logging Configuration 'INVALID_FORMAT'");
@@ -23,7 +24,7 @@ describe('configureLogging', () => {
 
   it('should throw error when invalid LOG_LEVEL is provided', () => {
     process.env.LOG_LEVEL = 'INVALID_LEVEL';
-    
+
     expect(() => {
       configureLogging();
     }).toThrow("Invalid Log Level Supplied to Logging Configuration 'INVALID_LEVEL'");

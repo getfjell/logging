@@ -3,6 +3,7 @@ import { createFormatter, getStructuredFormatter, getTextFormatter } from '@/for
 import * as LogFormat from '@/LogFormat';
 import * as LogLevel from '@/LogLevel';
 import util from 'util';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('Formatter', () => {
   const mockConfig: LoggingConfig = {
@@ -12,7 +13,7 @@ describe('Formatter', () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('getFormatter', () => {

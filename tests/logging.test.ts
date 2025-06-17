@@ -1,10 +1,11 @@
 import { getLogger } from '@/logging';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('Logging', () => {
   const originalEnv = process.env;
 
   beforeEach(() => {
-    jest.resetModules();
+    vi.resetModules();
     process.env = {
       ...originalEnv,
       LOG_LEVEL: '',
@@ -23,9 +24,9 @@ describe('Logging', () => {
 
     const logger = getLogger('testCategory');
 
-    console.log = jest.fn();
-    console.error = jest.fn();
-    console.warn = jest.fn();
+    console.log = vi.fn();
+    console.error = vi.fn();
+    console.warn = vi.fn();
 
     logger.error('Error message');
     expect(console.error).toHaveBeenCalledWith(expect.stringContaining('[ERROR]'));
@@ -47,9 +48,9 @@ describe('Logging', () => {
     process.env.LOG_LEVEL = 'DEBUG';
     const logger = getLogger('testCategory');
 
-    console.time = jest.fn();
-    console.timeEnd = jest.fn();
-    console.timeLog = jest.fn();
+    console.time = vi.fn();
+    console.timeEnd = vi.fn();
+    console.timeLog = vi.fn();
 
     const timer = logger.time('Timer message');
     timer.log('Intermediate log');
@@ -67,9 +68,9 @@ describe('Logging', () => {
     const logger2 = logger.get('testCategory', 'component1');
     const extendedLogger = logger2.get('component2');
 
-    console.log = jest.fn();
-    console.error = jest.fn();
-    console.warn = jest.fn();
+    console.log = vi.fn();
+    console.error = vi.fn();
+    console.warn = vi.fn();
     extendedLogger.error('Error message');
     expect(console.error).toHaveBeenCalledWith(expect.stringContaining('[ERROR]'));
     expect(console.error).toHaveBeenCalledWith(expect.stringContaining('[testCategory]'));
@@ -102,9 +103,9 @@ describe('Logging', () => {
     const logger2 = logger.get('testCategory', 'component1');
     const extendedLogger = logger2.get('component2');
 
-    console.time = jest.fn();
-    console.timeEnd = jest.fn();
-    console.timeLog = jest.fn();
+    console.time = vi.fn();
+    console.timeEnd = vi.fn();
+    console.timeLog = vi.fn();
 
     const timer = extendedLogger.time('Nested timer message');
     timer.log('Intermediate log');
@@ -119,9 +120,9 @@ describe('Logging', () => {
     process.env.LOG_LEVEL = 'DEBUG';
     const logger = getLogger('testCategory');
 
-    console.log = jest.fn();
-    console.error = jest.fn();
-    console.warn = jest.fn();
+    console.log = vi.fn();
+    console.error = vi.fn();
+    console.warn = vi.fn();
 
     logger.error('Error message');
     expect(console.error).toHaveBeenCalledWith(expect.stringContaining('[ERROR]'));
@@ -139,9 +140,9 @@ describe('Logging', () => {
     expect(console.log).toHaveBeenCalledWith(expect.stringContaining('[DEBUG]'));
     expect(console.log).toHaveBeenCalledWith(expect.stringContaining('Debug message'));
 
-    console.time = jest.fn();
-    console.timeEnd = jest.fn();
-    console.timeLog = jest.fn();
+    console.time = vi.fn();
+    console.timeEnd = vi.fn();
+    console.timeLog = vi.fn();
 
     const timer = logger.time('timer message');
     timer.log('log');
