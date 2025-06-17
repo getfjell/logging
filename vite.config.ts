@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import { VitePluginNode } from 'vite-plugin-node';
 import dts from 'vite-plugin-dts';
 import path from 'path';
+import { configDefaults } from 'vitest/config';
 
 export default defineConfig({
   server: {
@@ -22,8 +23,8 @@ export default defineConfig({
     dts({
       entryRoot: 'src',
       outDir: 'dist',
-      exclude: ['./tests/**/*.ts'],
       include: ['./src/**/*.ts'],
+      exclude: ['./tests/**/*.ts'],
     }),
   ],
   resolve: {
@@ -36,20 +37,53 @@ export default defineConfig({
     outDir: 'dist',
     lib: {
       entry: './src/index.ts',
-      formats: ['es'],
+      name: 'FjellLogging',
+      formats: ['es', 'cjs'],
+      fileName: (format) => `index.${format === 'es' ? 'js' : 'cjs'}`
     },
     rollupOptions: {
-      input: 'src/index.ts',
-      output: {
-        format: 'esm',
-        entryFileNames: '[name].js',
-        preserveModules: true,
-        exports: 'named',
-      },
+      output: [
+        {
+          format: 'esm',
+          entryFileNames: '[name].js',
+          preserveModules: true,
+          exports: 'named',
+        },
+        {
+          format: 'cjs',
+          entryFileNames: '[name].cjs',
+          preserveModules: true,
+          exports: 'named',
+        },
+      ],
     },
     // Make sure Vite generates ESM-compatible code
     modulePreload: false,
     minify: false,
     sourcemap: true
+  },
+  test: {
+    globals: true,
+    include: ['./tests/**/*.test.ts'],
+    environment: 'node',
+    coverage: {
+      provider: 'v8',
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: [
+        'node_modules/**',
+        'tests/**',
+        'src/index.ts',
+        ...configDefaults.exclude,
+      ],
+      thresholds: {
+        global: {
+          branches: 90,
+          functions: 100,
+          lines: 98,
+          statements: 98,
+        },
+      },
+      reportsDirectory: './coverage',
+    },
   },
 });
