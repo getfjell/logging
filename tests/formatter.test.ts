@@ -9,7 +9,12 @@ describe('Formatter', () => {
   const mockConfig: LoggingConfig = {
     logFormat: LogFormat.TEXT,
     logLevel: LogLevel.INFO,
-    overrides: {}
+    overrides: {},
+    floodControl: {
+      enabled: false,
+      threshold: 10,
+      timeframe: 1000,
+    },
   };
 
   beforeEach(() => {
