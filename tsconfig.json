@@ -14,7 +14,8 @@
     "module": "es2022",
     "moduleResolution": "bundler",
     "types": [
-      "vitest/globals"
+      "vitest/globals",
+      "node"
     ]
   },
   "include": [

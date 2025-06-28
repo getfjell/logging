@@ -1,10 +1,12 @@
 import * as LogFormat from "./LogFormat";
 import * as LogLevel from "./LogLevel";
+import { FloodControlConfig } from "./FloodControl";
 
 export type LoggingConfig = {
   logFormat: LogFormat.Config;
   logLevel: LogLevel.Config;
   overrides: Record<string, { logLevel: LogLevel.Config }>;
+  floodControl: FloodControlConfig;
 };
 
 const defaultLogLevel: LogLevel.Config = LogLevel.INFO;
@@ -14,13 +16,18 @@ export const defaultLoggingConfig: LoggingConfig = {
   logLevel: defaultLogLevel,
   logFormat: defaultLogFormat,
   overrides: {},
+  floodControl: {
+    enabled: false,
+    threshold: 10,
+    timeframe: 1000, // 1 second
+  }
 }
 
 // When we read the config from the environment, we need to convert the overrides to the correct format
 export const convertOverrides = (overrides: any): Record<string, { logLevel: LogLevel.Config }> => {
   const convertedOverrides: Record<string, { logLevel: LogLevel.Config }> = {};
-  if(overrides) {
-    Object.entries(overrides).forEach(([key, value] : [string, any]) => {
+  if (overrides) {
+    Object.entries(overrides).forEach(([key, value]: [string, any]) => {
       convertedOverrides[key] = { logLevel: value.logLevel ? LogLevel.getConfig(value.logLevel) : defaultLogLevel };
     });
   }
@@ -33,6 +40,10 @@ export const convertConfig = (config: any): LoggingConfig => {
     logLevel: config.logLevel ? LogLevel.getConfig(config.logLevel) : defaultLogLevel,
     logFormat: config.logFormat ? LogFormat.getConfig(config.logFormat) : defaultLogFormat,
     overrides: convertOverrides(config.overrides),
+    floodControl: {
+      ...defaultLoggingConfig.floodControl,
+      ...(config.floodControl || {})
+    },
   };
 }
 
