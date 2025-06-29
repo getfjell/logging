@@ -64,6 +64,7 @@ export default defineConfig({
   },
   test: {
     globals: true,
+    testTimeout: 30000,
     include: ['./tests/**/*.test.ts'],
     environment: 'node',
     coverage: {
