@@ -40,3 +40,4 @@ yarn-error.*
 *.tsbuildinfo
 pnpm-workspace.yaml
 
+RELEASE_NOTES.md
