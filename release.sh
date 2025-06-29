@@ -1,11 +1,29 @@
 #!/bin/bash
 set -e
 
-echo "Running commit script..."
-./commit.sh
+
+echo "Preparing for release: switching from workspace to remote dependencies."
+if [ -f "pnpm-workspace.yaml" ]; then
+    echo "Renaming pnpm-workspace.yaml to prevent workspace-protocol resolution"
+    mv pnpm-workspace.yaml pnpm-workspace.yaml.bak
+else
+    echo "pnpm-workspace.yaml not found, skipping rename."
+fi
+
+echo "Updating dependencies to latest versions from registry"
+pnpm update --latest
+
+echo "Staging changes for release commit"
+git add package.json pnpm-lock.yaml
 
 echo "Running clean, lint, build, and test..."
 pnpm run clean && pnpm run lint && pnpm run build && pnpm run test
+
+if git diff --staged --quiet; then
+  echo "No changes to commit, skipping commit."
+else
+  ./commit.sh
+fi
 
 echo "Bumping version..."
 pnpm version patch
@@ -23,7 +41,11 @@ echo "Pull request created: $PR_URL"
 
 echo "Waiting for PR #$PR_NUM checks to complete..."
 while true; do
-  STATUS=$(gh pr view "$PR_NUM" --json statusCheckRollup -q '.statusCheckRollup.state' || echo "FAILURE")
+  STATUS=$(gh pr view "$PR_NUM" --json statusCheckRollup --jq '.statusCheckRollup.state' 2>/dev/null)
+  if [[ -z "$STATUS" ]]; then
+    STATUS="PENDING"
+  fi
+  echo "PR status: $STATUS"
   if [[ "$STATUS" == "SUCCESS" ]]; then
     echo "All checks passed!"
     break
@@ -31,17 +53,17 @@ while true; do
     echo "PR checks failed."
     gh pr checks "$PR_NUM"
     exit 1
-  elif [[ "$STATUS" == "PENDING" ]]; then
-    echo "Checks are pending... waiting 30 seconds."
-    sleep 30
+  elif [[ "$STATUS" == "PENDING" || "$STATUS" == "EXPECTED" ]]; then
+    echo "Checks are pending... waiting 10 seconds."
+    sleep 10
   else
-    echo "Unknown PR status: $STATUS. Waiting 30 seconds."
-    sleep 30
+    echo "Unknown PR status: $STATUS. Waiting 10 seconds."
+    sleep 10
   fi
 done
 
 echo "Merging PR #$PR_NUM..."
-gh pr merge "$PR_NUM" --merge --delete-branch
+gh pr merge "$PR_NUM" --squash --delete-branch
 
 echo "Checking out main branch..."
 git checkout main
@@ -53,15 +75,15 @@ gh release create "$TAG_NAME" --notes-file RELEASE_NOTES.md
 
 echo "Creating next release branch..."
 CURRENT_VERSION=$(jq -r .version package.json)
-IFS='.' read -r -a version_parts <<< "$CURRENT_VERSION"
-NEXT_PATCH=$((version_parts[2] + 1))
-NEXT_VERSION="${version_parts[0]}.${version_parts[1]}.$NEXT_PATCH"
+MAJOR=$(echo "$CURRENT_VERSION" | cut -d. -f1)
+MINOR=$(echo "$CURRENT_VERSION" | cut -d. -f2)
+PATCH=$(echo "$CURRENT_VERSION" | cut -d. -f3)
+NEXT_PATCH=$((PATCH + 1))
+NEXT_VERSION="$MAJOR.$MINOR.$NEXT_PATCH"
 
 echo "Next version is $NEXT_VERSION"
 git checkout -b "release/v$NEXT_VERSION"
-pnpm version "$NEXT_VERSION" --no-git-tag-version --allow-same-version
-git add package.json pnpm-lock.yaml
 git commit -m "feat: Start release v$NEXT_VERSION"
 git push -u origin "release/v$NEXT_VERSION"
 
-echo "Release process completed." 
+echo "Release process completed."
