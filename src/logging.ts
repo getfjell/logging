@@ -9,12 +9,12 @@ export const getLogger = (name: string): Logger => {
 
 const createBaseLogger = (name: string, config: LoggingConfig): Logger => {
   let { logLevel } = config;
-  const { logFormat } = config;
+  const { logFormat, floodControl } = config;
   const overrides = config.overrides;
   if (overrides && overrides[name]) {
     logLevel = overrides[name].logLevel;
   }
 
   const coordinates = { category: name, components: [] };
-  return createLogger(logFormat, logLevel, coordinates);
+  return createLogger(logFormat, logLevel, coordinates, floodControl);
 };
