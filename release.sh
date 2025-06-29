@@ -1,12 +1,6 @@
 #!/bin/bash
 set -e
 
-# It is very important to set the GITHUB_TOKEN environment variable for this script to work.
-if [ -z "$GITHUB_TOKEN" ]; then
-  echo "Error: GITHUB_TOKEN environment variable is not set."
-  exit 1
-fi
-
 echo "Running commit script..."
 ./commit.sh
 
