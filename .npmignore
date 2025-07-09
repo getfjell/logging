@@ -19,3 +19,4 @@ yarn.lock
 .yarn/
 vite.config.ts
 eslint.config.mjs
+README.md
