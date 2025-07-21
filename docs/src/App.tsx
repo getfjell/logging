@@ -26,7 +26,48 @@ const App: React.FC = () => {
   const [loading, setLoading] = useState(true)
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null)
-  const [version, setVersion] = useState<string>('4.4.7')
+  const [version, setVersion] = useState<string>('4.4.8')
+
+  const processContent = (content: string, sectionId: string): string => {
+    if (sectionId === 'getting-started') {
+      // Extract getting started section from examples README
+      const sections = content.split('##')
+      const installSection = sections.find(s => s.trim().startsWith('Installation'))
+      const basicSection = sections.find(s => s.trim().startsWith('Basic Usage'))
+      const configSection = sections.find(s => s.trim().startsWith('Configuration'))
+
+      let result = '# Getting Started with Fjell Logging\n\n'
+      if (installSection) result += '##' + installSection
+      if (basicSection) result += '##' + basicSection
+      if (configSection) result += '##' + configSection
+      return result
+    } else if (sectionId === 'examples') {
+      // Extract examples sections
+      const sections = content.split('##')
+      const exampleSections = sections.filter(s =>
+        s.includes('Component-Based Logging') ||
+        s.includes('Time Logging') ||
+        s.includes('Flood Control') ||
+        s.includes('Available Examples') ||
+        s.includes('Running Examples')
+      )
+
+      return '# Examples\n\n' + exampleSections.map(s => '##' + s).join('')
+    } else if (sectionId === 'configuration') {
+      // Extract configuration sections
+      const sections = content.split('##')
+      const configSections = sections.filter(s =>
+        s.includes('Configuration') ||
+        s.includes('Environment Variables') ||
+        s.includes('Best Practices') ||
+        s.includes('Format Examples')
+      )
+
+      return '# Configuration\n\n' + configSections.map(s => '##' + s).join('')
+    }
+
+    return content
+  }
 
   useEffect(() => {
     const loadDocuments = async () => {
@@ -37,7 +78,8 @@ const App: React.FC = () => {
           const response = await fetch(section.file)
 
           if (response.ok) {
-            loadedDocs[section.id] = await response.text()
+            const content = await response.text()
+            loadedDocs[section.id] = processContent(content, section.id)
           } else {
             // Fallback content for missing files
             loadedDocs[section.id] = getFallbackContent(section.id)
@@ -61,7 +103,8 @@ const App: React.FC = () => {
           setVersion(pkg.version)
         }
       } catch {
-        console.log('Could not load version from package.json')
+        console.log('Could not load version from package.json, using default')
+        // Keep the default version 4.4.8 if fetch fails
       }
     }
 
@@ -264,13 +307,18 @@ configure({
 
             {/* Artistic Logo Placement */}
             <img
-              src="/logging/icon.png"
+              src="/icon2.png"
               alt="Fjell Logging"
               className="fjell-logo"
               title="Fjell Logging - Straightforward logging that cuts through the noise"
               onError={(e) => {
-                console.log('Icon failed to load, trying alternative path');
-                e.currentTarget.src = '/icon.png';
+                console.log('Icon2 failed to load, trying alternative path');
+                if (e.currentTarget.src === `${window.location.origin}/icon2.png`) {
+                  e.currentTarget.src = '/logging/icon2.png';
+                } else {
+                  console.log('All icon paths failed, hiding image');
+                  e.currentTarget.style.display = 'none';
+                }
               }}
               onLoad={() => console.log('Fjell logo loaded successfully')}
             />
