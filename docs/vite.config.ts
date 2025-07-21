@@ -10,6 +10,6 @@ export default defineConfig({
     emptyOutDir: true,
   },
   server: {
-    port: 3002
+    port: 3004
   }
 })
