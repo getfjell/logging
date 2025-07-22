@@ -1,6 +1,6 @@
 {
   "name": "@fjell/logging",
-  "version": "4.4.12",
+  "version": "4.4.13",
   "description": "Logging for Fjell",
   "type": "module",
   "main": "./dist/index.cjs",
