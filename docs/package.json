@@ -4,14 +4,15 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
+    "copy-docs": "node ../../fjell-docs-template/scripts/copy-docs.js",
+    "dev": "npm run copy-docs && vite",
+    "build": "npm run copy-docs && tsc && vite build",
     "preview": "vite preview",
     "test": "vitest run --coverage",
     "test:watch": "vitest --watch"
   },
   "dependencies": {
-    "@fjell/docs-template": "^1.0.4",
+    "@fjell/docs-template": "^1.0.5",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
