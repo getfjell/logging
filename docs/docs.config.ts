@@ -4,13 +4,23 @@ interface DocsConfig {
   port: number;
   branding: {
     theme: string;
+    tagline: string;
+    logo?: string;
     backgroundImage?: string;
+    primaryColor?: string;
+    accentColor?: string;
+    github?: string;
+    npm?: string;
   };
   sections: Array<{
     id: string;
     title: string;
     subtitle: string;
     file: string;
+  }>;
+  filesToCopy: Array<{
+    source: string;
+    destination: string;
   }>;
   plugins?: any[];
   version: {
@@ -22,12 +32,15 @@ interface DocsConfig {
 }
 
 const config: DocsConfig = {
-  projectName: 'fjell-logging',
+  projectName: 'Fjell Logging',
   basePath: '/logging/',
   port: 3004,
   branding: {
     theme: 'logging',
-    backgroundImage: '/pano.png'
+    tagline: 'Structured logging for modern applications',
+    backgroundImage: '/pano.png',
+    github: 'https://github.com/getfjell/fjell-logging',
+    npm: 'https://www.npmjs.com/package/@fjell/logging'
   },
   sections: [
     {
@@ -37,73 +50,25 @@ const config: DocsConfig = {
       file: '/logging/README.md'
     },
     {
-      id: 'getting-started',
-      title: 'Getting Started',
-      subtitle: 'Your first logs with Fjell',
-      file: '/logging/examples-README.md'
-    },
-    {
       id: 'examples',
       title: 'Examples',
       subtitle: 'Code examples & logging patterns',
       file: '/logging/examples-README.md'
+    }
+  ],
+  filesToCopy: [
+    {
+      source: '../README.md',
+      destination: 'public/README.md'
     },
     {
-      id: 'configuration',
-      title: 'Configuration',
-      subtitle: 'Environment & runtime config',
-      file: '/logging/examples-README.md'
+      source: '../examples/README.md',
+      destination: 'public/examples-README.md'
     }
   ],
   plugins: [],
   version: {
     source: 'package.json'
-  },
-  customContent: {
-    'getting-started': (content: string) => {
-      // Extract getting started sections
-      const sections = content.split('##')
-      const installSection = sections.find(s => s.trim().toLowerCase().startsWith('installation'))
-      const basicSection = sections.find(s => s.trim().toLowerCase().startsWith('basic usage'))
-      const configSection = sections.find(s => s.trim().toLowerCase().startsWith('configuration'))
-
-      let result = '# Getting Started with Fjell Logging\n\n'
-      if (installSection) result += '##' + installSection + '\n\n'
-      if (basicSection) result += '##' + basicSection + '\n\n'
-      if (configSection) result += '##' + configSection + '\n\n'
-      return result
-    },
-    'examples': (content: string) => {
-      // Extract examples sections
-      const sections = content.split('##')
-      const exampleSections = sections.filter(s =>
-        s.includes('Component-Based Logging') ||
-        s.includes('Time Logging') ||
-        s.includes('Flood Control') ||
-        s.includes('Advanced Usage')
-      )
-
-      if (exampleSections.length > 0) {
-        return '# Examples\n\n' + exampleSections.map(s => '##' + s).join('\n\n')
-      }
-
-      return content
-    },
-    'configuration': (content: string) => {
-      // Extract configuration sections
-      const sections = content.split('##')
-      const configSections = sections.filter(s =>
-        s.includes('Configuration') ||
-        s.includes('Environment') ||
-        s.includes('Settings')
-      )
-
-      if (configSections.length > 0) {
-        return '# Configuration\n\n' + configSections.map(s => '##' + s).join('\n\n')
-      }
-
-      return content
-    }
   }
 }
 
