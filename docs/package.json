@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "copy-docs": "node ../../fjell-docs-template/scripts/copy-docs.js",
+    "copy-docs": "node node_modules/@fjell/docs-template/scripts/copy-docs.js",
     "dev": "npm run copy-docs && vite",
     "build": "npm run copy-docs && tsc && vite build",
     "preview": "vite preview",
