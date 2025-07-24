@@ -9,7 +9,5 @@ runs:
       run: |
         # Change to docs directory and install dependencies
         cd docs
-        npm install --no-frozen-lockfile
-
-        # Build the Vite documentation site (includes copy-docs)
+        npm install
         npm run build
