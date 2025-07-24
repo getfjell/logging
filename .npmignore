@@ -22,6 +22,5 @@ eslint.config.mjs
 README.md
 build.js
 vitest.config.ts
-tsconfig.build.json
 pnpm-lock.yaml
 vite.config.ts
