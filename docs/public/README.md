@@ -1,12 +1,8 @@
-![Licence](https://img.shields.io/github/license/getfjell/core.svg?style=plastic)
-![GitHub language count](https://img.shields.io/github/languages/count/getfjell/core?style=plastic)
-![GitHub top language](https://img.shields.io/github/languages/top/getfjell/core?style=plastic)
-
 Fjell Logging is just another logging library and it's designed to as straightforward as possible.
 
 ## Why another logging library?
 
-The original author was getting really tired of the existing logging libraries and the level of complexity they added to the codebase. 
+The original author was getting really tired of the existing logging libraries and the level of complexity they added to the codebase.
 
 ## How do I install it?
 
@@ -16,14 +12,14 @@ Then create an environment variable called `LOGGING_CONFIG` and configure it as 
 
 ````
 LOGGING_CONFIG=`
-{ 
-    "logLevel": "DEFAULT", 
-    "logFormat": "TEXT", 
-    "overrides": { 
-        "@myproject/core": { "logLevel": "INFO" }, 
-        "@myproject/wagner-lib": { "logLevel": "DEBUG" }, 
-        "@myproject/express-router": { "logLevel": "DEFAULT" }, 
-    } 
+{
+    "logLevel": "DEFAULT",
+    "logFormat": "TEXT",
+    "overrides": {
+        "@myproject/core": { "logLevel": "INFO" },
+        "@myproject/wagner-lib": { "logLevel": "DEBUG" },
+        "@myproject/express-router": { "logLevel": "DEFAULT" },
+    }
 }
 ````
 
@@ -87,20 +83,20 @@ The overrides are used to set the log level for a specific project or component.
 
 ````
 LOGGING_CONFIG=`
-{ 
-    "logLevel": "DEFAULT", 
-    "logFormat": "TEXT", 
-    "overrides": { 
-        "@myproject/core": { "logLevel": "INFO" }, 
-        "@myproject/wagner-lib": { "logLevel": "DEBUG" }, 
-        "@myproject/express-router": { "logLevel": "DEFAULT" }, 
-    } 
+{
+    "logLevel": "DEFAULT",
+    "logFormat": "TEXT",
+    "overrides": {
+        "@myproject/core": { "logLevel": "INFO" },
+        "@myproject/wagner-lib": { "logLevel": "DEBUG" },
+        "@myproject/express-router": { "logLevel": "DEFAULT" },
+    }
 }
 ````
 
 ## Wait, what if I don't use yarn?  How do I install it then?
 
-You have a lot of question, don't you? We think the answer is `npm install @fjell/logging`, but we're not sure because we (the project) use yarn.  
+You have a lot of question, don't you? We think the answer is `npm install @fjell/logging`, but we're not sure because we (the project) use yarn.
 
 Please, calm down about that last sentence.  You don't need to write a complainy post about it.Don't read that last statement as some sort of endorsement of yarn or a recommendation, it's just a fact about this project.  If you want to add more helpful information for people using npm, go ahead and submit a pull request.
 
