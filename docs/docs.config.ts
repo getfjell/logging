@@ -7,9 +7,12 @@ const config: DocsConfig = {
   branding: {
     theme: 'logging',
     tagline: 'Structured logging for modern applications',
-    backgroundImage: '/pano.png',
+    backgroundImage: './pano.png',
     github: 'https://github.com/getfjell/logging',
     npm: 'https://www.npmjs.com/package/@fjell/logging'
+  },
+  version: {
+    source: 'package.json'
   },
   sections: [
     {
