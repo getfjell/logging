@@ -39,7 +39,7 @@ const config: DocsConfig = {
     theme: 'logging',
     tagline: 'Structured logging for modern applications',
     backgroundImage: '/pano.png',
-    github: 'https://github.com/getfjell/fjell-logging',
+    github: 'https://github.com/getfjell/logging',
     npm: 'https://www.npmjs.com/package/@fjell/logging'
   },
   sections: [
