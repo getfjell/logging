@@ -36,9 +36,6 @@ const config: DocsConfig = {
     }
   ],
   plugins: [],
-  version: {
-    source: 'package.json'
-  }
 }
 
 export default config
