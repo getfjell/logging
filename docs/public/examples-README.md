@@ -1,5 +1,3 @@
-# @fjell/logging Examples
-
 This directory contains examples demonstrating how to use the `@fjell/logging` library. The fjell logging library provides structured, configurable logging with features like flood control, component-based organization, and environment-based configuration.
 
 ## Table of Contents
@@ -166,4 +164,4 @@ LOG_LEVEL=DEBUG npx tsx examples/log-levels.ts
 ```json
 {"level":"INFO","category":"my-app","components":[],"message":"Hello, world!","timestamp":"2024-01-15T10:30:00.000Z"}
 {"level":"ERROR","category":"my-app","components":[],"message":"Something went wrong!","data":[{"errorCode":500}],"timestamp":"2024-01-15T10:30:01.000Z"}
-``` 
+```
