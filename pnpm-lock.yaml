@@ -15,8 +15,8 @@ importers:
         specifier: ^9.31.0
         version: 9.31.0
       '@fjell/eslint-config':
-        specifier: ^1.1.1
-        version: 1.1.1(eslint@9.31.0)(typescript@5.8.3)
+        specifier: ^1.1.2
+        version: 1.1.2(eslint@9.31.0)(typescript@5.8.3)
       '@tsconfig/recommended':
         specifier: ^1.0.10
         version: 1.0.10
@@ -310,8 +310,8 @@ packages:
     resolution: {integrity: sha512-Ul5l+lHEcw3L5+k8POx6r74mxEYKG5kOb6Xpy2gCRW6zweT6TEhAf8vhxGgjhqrd/VO/Dirhsb+1hNpD1ue9hw==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@fjell/eslint-config@1.1.1':
-    resolution: {integrity: sha512-pKWogDRDJcVDg2ap7eG1CWsXN+TSVxbrcr4H2nbnoUsGiz/C6Oin3by4adc/RE6/XhpsPhbZMeaeQIeqYBxb8Q==}
+  '@fjell/eslint-config@1.1.2':
+    resolution: {integrity: sha512-4PZqDcIMb1McR+iDP8eOrVtz/Au83iEN10hVplZ43bX2a2U8Ns8S4xk3N5w/E3NnP6mqke5I3iXnb0OGAXWiLg==}
     peerDependencies:
       eslint: ^9.0.0
       typescript: ^5.0.0
@@ -1802,7 +1802,7 @@ snapshots:
       '@eslint/core': 0.15.1
       levn: 0.4.1
 
-  '@fjell/eslint-config@1.1.1(eslint@9.31.0)(typescript@5.8.3)':
+  '@fjell/eslint-config@1.1.2(eslint@9.31.0)(typescript@5.8.3)':
     dependencies:
       '@eslint/eslintrc': 3.3.1
       '@eslint/js': 9.31.0
