@@ -9,10 +9,10 @@ runs:
       run: |
         # Change to docs directory and install dependencies
         cd docs
-        pnpm install --no-frozen-lockfile
+        npm install --no-frozen-lockfile
 
         # Use docs-template copy functionality
         npx @fjell/docs-template copy-docs
 
         # Build the Vite documentation site
-        pnpm run build
+        npm run build
