@@ -15,7 +15,7 @@ This directory contains examples demonstrating how to use the `@fjell/logging` l
 ```bash
 npm install @fjell/logging
 # or
-pnpm add @fjell/logging
+npm install @fjell/logging
 ```
 
 ## Basic Usage
@@ -134,7 +134,7 @@ Each example can be run directly with Node.js:
 
 ```bash
 # Install dependencies
-pnpm install
+npm install
 
 # Run an example
 npx tsx examples/basic-usage.ts
