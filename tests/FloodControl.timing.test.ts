@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { performance } from 'perf_hooks';
-import { FloodControl, FloodControlConfig } from '@/FloodControl';
+import { FloodControl, FloodControlConfig } from '../src/FloodControl';
 
 const sleep = (ms: number) => {
   const end = performance.now() + ms;
