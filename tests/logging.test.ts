@@ -1,4 +1,4 @@
-import { getLogger } from '@/logging';
+import { getLogger } from '../src/logging';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('Logging', () => {

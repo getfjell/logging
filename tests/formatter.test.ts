@@ -1,7 +1,7 @@
-import { LoggingConfig } from '@/config';
-import { createFormatter, getStructuredFormatter, getTextFormatter } from '@/formatter';
-import * as LogFormat from '@/LogFormat';
-import * as LogLevel from '@/LogLevel';
+import { LoggingConfig } from '../src/config';
+import { createFormatter, getStructuredFormatter, getTextFormatter } from '../src/formatter';
+import * as LogFormat from '../src/LogFormat';
+import * as LogLevel from '../src/LogLevel';
 import util from 'util';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
