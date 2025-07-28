@@ -1,5 +1,5 @@
-import { configureLogging } from '@/config';
-import * as LogLevel from '@/LogLevel';
+import { configureLogging } from '../src/config';
+import * as LogLevel from '../src/LogLevel';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('configureLogging', () => {

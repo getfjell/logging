@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { FloodControl, FloodControlConfig } from '@/FloodControl';
+import { FloodControl, FloodControlConfig } from '../src/FloodControl';
 
 describe('FloodControl', () => {
   beforeEach(() => {
