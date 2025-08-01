@@ -1,9 +1,9 @@
 export type LogLevelName =
-  "EMERGENCY" | "ALERT" | "CRITICAL" | "ERROR" | "WARNING" | "NOTICE" | "INFO" | "DEBUG" | "DEFAULT";
+  "EMERGENCY" | "ALERT" | "CRITICAL" | "ERROR" | "WARNING" | "NOTICE" | "INFO" | "DEBUG" | "TRACE" | "DEFAULT";
 
 export interface Config {
-    name: LogLevelName;
-    value: number;
+  name: LogLevelName;
+  value: number;
 }
 
 export const EMERGENCY: Config = {
@@ -38,9 +38,13 @@ export const DEBUG: Config = {
   name: "DEBUG",
   value: 7,
 }
+export const TRACE: Config = {
+  name: "TRACE",
+  value: 8,
+}
 export const DEFAULT: Config = {
   name: "DEFAULT",
-  value: 8,
+  value: 9,
 }
 
 export const LogLevels: Config[] = [
@@ -52,6 +56,7 @@ export const LogLevels: Config[] = [
   NOTICE,
   INFO,
   DEBUG,
+  TRACE,
   DEFAULT,
 ];
 

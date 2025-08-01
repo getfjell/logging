@@ -2,6 +2,26 @@ import util from 'util';
 import * as LogFormat from "./LogFormat";
 import * as LogLevel from "./LogLevel";
 
+// Safe wrapper around util.inspect that handles any serialization errors
+const safeInspect = (obj: any): string => {
+  try {
+    return util.inspect(obj);
+  } catch {
+    // If util.inspect fails (which is very rare), fall back to a safe representation
+    return `[Object: ${typeof obj}]`;
+  }
+};
+
+// Safe wrapper around util.format that handles any format errors
+const safeFormat = (message: string, ...args: any[]): string => {
+  try {
+    return util.format(message, ...args);
+  } catch {
+    // If util.format fails, return the message with a safe representation of args
+    return `${message} ${safeInspect(args)}`;
+  }
+};
+
 export interface Formatter {
 
   getLogFormat: () => LogFormat.Config;
@@ -43,9 +63,9 @@ export const getTextFormatter = (): Formatter => {
     if (payload.data.length === 0) {
       logMessage = payload.message;
     } else if (hasSpecifiers) {
-      logMessage = util.format(payload.message, ...payload.data);
+      logMessage = safeFormat(payload.message, ...payload.data);
     } else {
-      logMessage = `${payload.message} ${util.inspect(payload.data)}`;
+      logMessage = `${payload.message} ${safeInspect(payload.data)}`;
     }
 
     return `(${new Date().valueOf()}) [${level.name}] - ` +
@@ -63,7 +83,7 @@ export const getTextFormatter = (): Formatter => {
     const timerMessage =
       `(${new Date().valueOf()}) [${level.name}] - ` +
       `[${coordinates.category}] ${coordinates.components.map((c) => `[${c}]`)} ` +
-      `${util.format(payload.message, ...payload.data)} ${JSON.stringify(payload.data)} ${randomInt}`;
+      `${safeFormat(payload.message, ...payload.data)} ${safeInspect(payload.data)} ${randomInt}`;
 
     return timerMessage;
   }
@@ -83,12 +103,12 @@ export const getStructuredFormatter = (): Formatter => {
 
     return JSON.stringify({
       severity,
-      message: hasSpecifiers ? util.format(payload.message, ...payload.data) : payload.message,
+      message: hasSpecifiers ? safeFormat(payload.message, ...payload.data) : payload.message,
       "logging.googleapis.com/labels": {
         category: coordinates.category,
         components: `${coordinates.components.map((c) => `[${c}]`)}`,
       },
-      ...(!hasSpecifiers && payload.data.length > 0 && { data: { ...payload.data } }),
+      ...(!hasSpecifiers && payload.data.length > 0 && { data: safeInspect(payload.data) }),
     });
   }
 
@@ -102,12 +122,12 @@ export const getStructuredFormatter = (): Formatter => {
     const randomInt = Math.floor(Math.random() * 1000000);
     return JSON.stringify({
       severity,
-      message: util.format(payload.message, ...payload.data),
+      message: safeFormat(payload.message, ...payload.data),
       "logging.googleapis.com/labels": {
         category: coordinates.category,
         components: `${coordinates.components.map((c) => `[${c}]`)}`,
       },
-      data: { ...payload.data },
+      data: safeInspect(payload.data),
       "logging.googleapis.com/spanId": String(randomInt)
     });
   }
