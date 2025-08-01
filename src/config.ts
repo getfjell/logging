@@ -57,11 +57,26 @@ export const configureLogging = (): LoggingConfig => {
   let logFormatEnv = process.env.LOG_FORMAT;
 
   if (loggingConfigEnv) {
-    config = JSON.parse(loggingConfigEnv);
+    try {
+      config = JSON.parse(loggingConfigEnv);
+    } catch (error) {
+      console.error('Invalid JSON in LOGGING_CONFIG environment variable:', error);
+      config = {};
+    }
   } else if (expoLoggingConfigEnv) {
-    config = JSON.parse(expoLoggingConfigEnv);
+    try {
+      config = JSON.parse(expoLoggingConfigEnv);
+    } catch (error) {
+      console.error('Invalid JSON in EXPO_PUBLIC_LOGGING_CONFIG environment variable:', error);
+      config = {};
+    }
   } else if (nextLoggingConfigEnv) {
-    config = JSON.parse(nextLoggingConfigEnv);
+    try {
+      config = JSON.parse(nextLoggingConfigEnv);
+    } catch (error) {
+      console.error('Invalid JSON in NEXT_PUBLIC_LOGGING_CONFIG environment variable:', error);
+      config = {};
+    }
   }
 
   const convertedConfig: LoggingConfig = convertConfig(config);
@@ -79,9 +94,7 @@ export const configureLogging = (): LoggingConfig => {
   }
 
   // Override anything missing with defaults
-  config = { ...defaultLoggingConfig, ...convertedConfig };
+  const finalConfig = { ...defaultLoggingConfig, ...convertedConfig };
 
-  return {
-    ...convertedConfig,
-  };
+  return finalConfig;
 }
