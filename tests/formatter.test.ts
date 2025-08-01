@@ -69,7 +69,7 @@ describe('Formatter', () => {
       expect(result).toContain(`[${testCoordinates.components[0]}]`);
       expect(result).toContain(`[${testCoordinates.components[1]}]`);
       expect(result).toContain('test message');
-      expect(result).toContain(JSON.stringify(['test data']));
+      expect(result).toContain("[ 'test data' ]");
       expect(result).toMatch(/\d{1,6}$/); // Should end with random number
     });
   });

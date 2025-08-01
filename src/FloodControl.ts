@@ -1,9 +1,12 @@
+import util from 'util';
+
 export const hash = (message: string, data: any[]): string => {
   const dataString = data.map(item => {
     try {
       return JSON.stringify(item);
     } catch {
-      return 'UnstringifiableObject';
+      // Fallback to util.inspect for objects with circular references
+      return util.inspect(item);
     }
   }).join('');
   return `${message}${dataString}`;

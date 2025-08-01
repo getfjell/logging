@@ -22,11 +22,11 @@ describe('Logging', () => {
   it('should log messages according to log level', () => {
     process.env.LOG_LEVEL = 'DEBUG';
 
-    const logger = getLogger('testCategory');
-
     console.log = vi.fn();
     console.error = vi.fn();
     console.warn = vi.fn();
+
+    const logger = getLogger('testCategory');
 
     logger.error('Error message');
     expect(console.error).toHaveBeenCalledWith(expect.stringContaining('[ERROR]'));
@@ -63,14 +63,14 @@ describe('Logging', () => {
 
   it('should allow adding more components with get method', () => {
     process.env.LOG_LEVEL = 'DEBUG';
-    const logger = getLogger('testCategory');
-
-    const logger2 = logger.get('testCategory', 'component1');
-    const extendedLogger = logger2.get('component2');
 
     console.log = vi.fn();
     console.error = vi.fn();
     console.warn = vi.fn();
+
+    const logger = getLogger('testCategory');
+    const logger2 = logger.get('testCategory', 'component1');
+    const extendedLogger = logger2.get('component2');
     extendedLogger.error('Error message');
     expect(console.error).toHaveBeenCalledWith(expect.stringContaining('[ERROR]'));
     expect(console.error).toHaveBeenCalledWith(expect.stringContaining('[testCategory]'));
@@ -118,11 +118,12 @@ describe('Logging', () => {
 
   it('should handle logging with undefined payload data', () => {
     process.env.LOG_LEVEL = 'DEBUG';
-    const logger = getLogger('testCategory');
 
     console.log = vi.fn();
     console.error = vi.fn();
     console.warn = vi.fn();
+
+    const logger = getLogger('testCategory');
 
     logger.error('Error message');
     expect(console.error).toHaveBeenCalledWith(expect.stringContaining('[ERROR]'));
@@ -170,7 +171,7 @@ describe('Logging', () => {
     expect(console.error).toHaveBeenCalledWith(expect.stringContaining('Critical message'));
 
     logger.trace('Trace message');
-    expect(console.log).toHaveBeenCalledWith(expect.stringContaining('[DEBUG]'));
+    expect(console.log).toHaveBeenCalledWith(expect.stringContaining('[TRACE]'));
     expect(console.log).toHaveBeenCalledWith(expect.stringContaining('Trace message'));
 
     logger.default('Default message');

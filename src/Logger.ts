@@ -1,7 +1,7 @@
 // eslint-disable no-unused-expressions
 import * as LogLevel from "./LogLevel";
 import * as LogFormat from "./LogFormat";
-import { createWriter } from "./Writer";
+import { createWriter, WriterOptions } from "./Writer";
 import { createFormatter } from "./formatter";
 import { FloodControl, FloodControlConfig } from "./FloodControl";
 
@@ -23,6 +23,7 @@ export interface Logger {
   default: (message: string, ...data: any[]) => void;
   time: (message: string, ...data: any[]) => TimeLogger;
   get: (...additionalComponents: string[]) => Logger;
+  destroy: () => void;
 }
 
 export const createLogger = (
@@ -30,6 +31,7 @@ export const createLogger = (
   logLevel: LogLevel.Config,
   coordinates: { category: string, components: string[] },
   floodControlConfig: FloodControlConfig,
+  writerOptions?: WriterOptions,
 ): Logger => {
   const formatter = createFormatter(logFormat);
   const floodControl = floodControlConfig.enabled ? new FloodControl(floodControlConfig) : null;
@@ -38,7 +40,7 @@ export const createLogger = (
   const logFunction = console.log;
 
   // TODO: This is where you could change the destination.
-  const writer = createWriter(formatter, logFunction);
+  const writer = createWriter(formatter, logFunction, writerOptions);
 
   const write = (level: LogLevel.Config, message: string, data: any[]) => {
     if (logLevel.value < level.value) {
@@ -129,7 +131,7 @@ export const createLogger = (
       write(LogLevel.DEBUG, message, data);
     },
     trace: (message: string, ...data: any[]) => {
-      write(LogLevel.DEBUG, message, data);
+      write(LogLevel.TRACE, message, data);
     },
     default: (message: string, ...data: any[]) => {
       write(LogLevel.DEFAULT, message, data);
@@ -142,7 +144,12 @@ export const createLogger = (
       return createLogger(logFormat, logLevel, {
         category: coordinates.category,
         components: [...coordinates.components, ...additionalComponents],
-      }, floodControlConfig);
+      }, floodControlConfig, writerOptions);
+    },
+    destroy: () => {
+      if (floodControl) {
+        floodControl.destroy();
+      }
     }
   };
 }
