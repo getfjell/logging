@@ -1,15 +1,22 @@
 {
   "name": "@fjell/logging",
-  "version": "4.4.41",
+  "version": "4.4.42",
   "description": "Logging for Fjell",
   "type": "module",
+  "main": "./dist/index.js",
   "module": "./dist/index.js",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./browser": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     }
   },
+  "browser": "./dist/index.js",
   "files": [
     "dist"
   ],

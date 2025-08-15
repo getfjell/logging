@@ -1,12 +1,12 @@
-import util from 'util';
+import { stringifyJSON } from './utils';
 
 export const hash = (message: string, data: any[]): string => {
   const dataString = data.map(item => {
     try {
       return JSON.stringify(item);
     } catch {
-      // Fallback to util.inspect for objects with circular references
-      return util.inspect(item);
+      // Fallback to stringifyJSON for objects with circular references
+      return stringifyJSON(item);
     }
   }).join('');
   return `${message}${dataString}`;
