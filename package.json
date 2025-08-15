@@ -1,6 +1,6 @@
 {
   "name": "@fjell/logging",
-  "version": "4.4.42-dev.0",
+  "version": "4.4.42",
   "description": "Logging for Fjell",
   "type": "module",
   "main": "./dist/index.js",
