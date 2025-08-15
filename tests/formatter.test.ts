@@ -2,7 +2,7 @@ import { LoggingConfig } from '../src/config';
 import { createFormatter, getStructuredFormatter, getTextFormatter } from '../src/formatter';
 import * as LogFormat from '../src/LogFormat';
 import * as LogLevel from '../src/LogLevel';
-import util from 'util';
+import { stringifyJSON } from '../src/utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('Formatter', () => {
@@ -14,6 +14,15 @@ describe('Formatter', () => {
       enabled: false,
       threshold: 10,
       timeframe: 1000,
+    },
+    masking: {
+      enabled: false,
+      maskEmails: true,
+      maskSSNs: true,
+      maskPrivateKeys: true,
+      maskBase64Blobs: true,
+      maskJWTs: true,
+      maxDepth: 8,
     },
   };
 
@@ -59,7 +68,7 @@ describe('Formatter', () => {
       expect(result).toContain(`[${testCoordinates.components[0]}]`);
       expect(result).toContain(`[${testCoordinates.components[1]}]`);
       expect(result).toContain('test message');
-      expect(result).toContain(util.inspect(['test data']));
+      expect(result).toContain(stringifyJSON(['test data']));
     });
 
     it('should format timer message correctly', () => {
@@ -69,7 +78,7 @@ describe('Formatter', () => {
       expect(result).toContain(`[${testCoordinates.components[0]}]`);
       expect(result).toContain(`[${testCoordinates.components[1]}]`);
       expect(result).toContain('test message');
-      expect(result).toContain("[ 'test data' ]");
+      expect(result).toContain(stringifyJSON(['test data']));
       expect(result).toMatch(/\d{1,6}$/); // Should end with random number
     });
   });

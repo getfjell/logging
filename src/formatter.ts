@@ -1,26 +1,8 @@
-import util from 'util';
+// Cross-platform utility functions that work in both Node.js and browser environments
+
 import * as LogFormat from "./LogFormat";
 import * as LogLevel from "./LogLevel";
-
-// Safe wrapper around util.inspect that handles any serialization errors
-const safeInspect = (obj: any): string => {
-  try {
-    return util.inspect(obj);
-  } catch {
-    // If util.inspect fails (which is very rare), fall back to a safe representation
-    return `[Object: ${typeof obj}]`;
-  }
-};
-
-// Safe wrapper around util.format that handles any format errors
-const safeFormat = (message: string, ...args: any[]): string => {
-  try {
-    return util.format(message, ...args);
-  } catch {
-    // If util.format fails, return the message with a safe representation of args
-    return `${message} ${safeInspect(args)}`;
-  }
-};
+import { safeFormat, safeInspect } from "./utils";
 
 export interface Formatter {
 

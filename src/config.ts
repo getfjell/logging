@@ -1,12 +1,14 @@
 import * as LogFormat from "./LogFormat";
 import * as LogLevel from "./LogLevel";
 import { FloodControlConfig } from "./FloodControl";
+import { defaultMaskingConfig, MaskingConfig } from "./utils/maskSensitive";
 
 export type LoggingConfig = {
   logFormat: LogFormat.Config;
   logLevel: LogLevel.Config;
   overrides: Record<string, { logLevel: LogLevel.Config }>;
   floodControl: FloodControlConfig;
+  masking: MaskingConfig;
 };
 
 const defaultLogLevel: LogLevel.Config = LogLevel.INFO;
@@ -20,7 +22,8 @@ export const defaultLoggingConfig: LoggingConfig = {
     enabled: false,
     threshold: 10,
     timeframe: 1000, // 1 second
-  }
+  },
+  masking: defaultMaskingConfig,
 }
 
 // When we read the config from the environment, we need to convert the overrides to the correct format
@@ -43,6 +46,10 @@ export const convertConfig = (config: any): LoggingConfig => {
     floodControl: {
       ...defaultLoggingConfig.floodControl,
       ...(config.floodControl || {})
+    },
+    masking: {
+      ...defaultLoggingConfig.masking,
+      ...(config.masking || {})
     },
   };
 }
