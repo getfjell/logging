@@ -30,7 +30,7 @@
   "scripts": {
     "lint": "eslint . --ext .ts --fix",
     "dev": "concurrently \"tsc --noEmit --watch\" \"node build.js --watch\"",
-    "build": "npm run lint && tsc --noEmit && node build.js",
+    "build": "npm run lint && node build.js",
     "clean": "rm -rf dist",
     "test": "npm run lint && vitest run --coverage",
     "prepublishOnly": "npm run clean && npm run build",

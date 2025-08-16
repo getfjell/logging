@@ -1,4 +1,15 @@
 import { build } from 'esbuild';
+import { execSync } from 'child_process';
+
+// Generate TypeScript declarations first
+console.log('Generating TypeScript declarations...');
+try {
+  execSync('tsc --emitDeclarationOnly', { stdio: 'inherit' });
+  console.log('TypeScript declarations generated successfully!');
+} catch (error) {
+  console.error('Failed to generate TypeScript declarations:', error.message);
+  process.exit(1);
+}
 
 // Build cross-platform version that works in both Node.js and browser
 console.log('Building cross-platform version...');
@@ -19,4 +30,5 @@ await build({
 
 console.log('Build completed successfully!');
 console.log(`- Cross-platform build: dist/index.js`);
+console.log(`- TypeScript declarations: dist/index.d.ts`);
 console.log('This build works in both Node.js and browser environments');
