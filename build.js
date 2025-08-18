@@ -4,7 +4,7 @@ import { execSync } from 'child_process';
 // Generate TypeScript declarations first
 console.log('Generating TypeScript declarations...');
 try {
-  execSync('tsc --emitDeclarationOnly', { stdio: 'inherit' });
+  execSync('npx tsc --emitDeclarationOnly', { stdio: 'inherit' });
   console.log('TypeScript declarations generated successfully!');
 } catch (error) {
   console.error('Failed to generate TypeScript declarations:', error.message);
