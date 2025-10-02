@@ -522,6 +522,187 @@ MIIBuwIBAAKBgQDc+CZK9bBA9I+sdcFwKXqJm+Z+8j8Kj8Kj8Kj8Kj8Kj8Kj8Kj8
       expect(masked.users[1].profile.ssn).toBe("987-65-4321"); // SSN masking disabled
       expect(masked.metadata.admin).toBe("****");
     });
+
+    it("should handle empty string input in customMaskString", () => {
+      const config: MaskingConfig = {
+        ...defaultMaskingConfig,
+        enabled: true,
+        maskEmails: true
+      };
+
+      // Test empty string (line 154)
+      expect(maskWithConfig("", config)).toBe("");
+    });
+
+    it("should handle JWT masking with config when maskJWTs is true", () => {
+      const longJWT = `header.${"a".repeat(101)}.signature`;
+      const config: MaskingConfig = {
+        ...defaultMaskingConfig,
+        enabled: true,
+        maskJWTs: true
+      };
+
+      expect(maskWithConfig(longJWT, config)).toBe("****");
+    });
+
+    it("should not mask JWT when maskJWTs is false", () => {
+      const longJWT = `header.${"a".repeat(101)}.signature`;
+      const config: MaskingConfig = {
+        ...defaultMaskingConfig,
+        enabled: true,
+        maskJWTs: false
+      };
+
+      expect(maskWithConfig(longJWT, config)).toBe(longJWT);
+    });
+
+    it("should handle JWT with long third segment when maskJWTs is true", () => {
+      const longThirdJWT = `header.payload.${"a".repeat(101)}`;
+      const config: MaskingConfig = {
+        ...defaultMaskingConfig,
+        enabled: true,
+        maskJWTs: true
+      };
+
+      expect(maskWithConfig(longThirdJWT, config)).toBe("****");
+    });
+
+    it("should not mask JWT with short segments when maskJWTs is true", () => {
+      const shortJWT = "header.payload.signature";
+      const config: MaskingConfig = {
+        ...defaultMaskingConfig,
+        enabled: true,
+        maskJWTs: true
+      };
+
+      expect(maskWithConfig(shortJWT, config)).toBe(shortJWT);
+    });
+
+    it("should handle private key masking with config when maskPrivateKeys is true", () => {
+      const privateKey = `-----BEGIN PRIVATE KEY-----
+MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC7VJTUt9Us8cKB
+-----END PRIVATE KEY-----`;
+      const config: MaskingConfig = {
+        ...defaultMaskingConfig,
+        enabled: true,
+        maskPrivateKeys: true
+      };
+
+      expect(maskWithConfig(privateKey, config)).toBe("****");
+    });
+
+    it("should not mask private keys when maskPrivateKeys is false", () => {
+      const privateKey = `-----BEGIN PRIVATE KEY-----
+MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC7VJTUt9Us8cKB
+-----END PRIVATE KEY-----`;
+      const config: MaskingConfig = {
+        ...defaultMaskingConfig,
+        enabled: true,
+        maskPrivateKeys: false
+      };
+
+      expect(maskWithConfig(privateKey, config)).toBe(privateKey);
+    });
+
+    it("should handle base64 blob masking with config when maskBase64Blobs is true", () => {
+      const longBase64 = "a".repeat(200);
+      const config: MaskingConfig = {
+        ...defaultMaskingConfig,
+        enabled: true,
+        maskBase64Blobs: true
+      };
+
+      expect(maskWithConfig(longBase64, config)).toBe("****");
+    });
+
+    it("should not mask base64 blobs when maskBase64Blobs is false", () => {
+      const longBase64 = "a".repeat(200);
+      const config: MaskingConfig = {
+        ...defaultMaskingConfig,
+        enabled: true,
+        maskBase64Blobs: false
+      };
+
+      expect(maskWithConfig(longBase64, config)).toBe(longBase64);
+    });
+
+    it("should handle email masking with config when maskEmails is true", () => {
+      const email = "user@example.com";
+      const config: MaskingConfig = {
+        ...defaultMaskingConfig,
+        enabled: true,
+        maskEmails: true
+      };
+
+      expect(maskWithConfig(email, config)).toBe("****");
+    });
+
+    it("should not mask emails when maskEmails is false", () => {
+      const email = "user@example.com";
+      const config: MaskingConfig = {
+        ...defaultMaskingConfig,
+        enabled: true,
+        maskEmails: false
+      };
+
+      expect(maskWithConfig(email, config)).toBe(email);
+    });
+
+    it("should handle SSN masking with config when maskSSNs is true", () => {
+      const ssn = "123-45-6789";
+      const config: MaskingConfig = {
+        ...defaultMaskingConfig,
+        enabled: true,
+        maskSSNs: true
+      };
+
+      expect(maskWithConfig(ssn, config)).toBe("****");
+    });
+
+    it("should not mask SSNs when maskSSNs is false", () => {
+      const ssn = "123-45-6789";
+      const config: MaskingConfig = {
+        ...defaultMaskingConfig,
+        enabled: true,
+        maskSSNs: false
+      };
+
+      expect(maskWithConfig(ssn, config)).toBe(ssn);
+    });
+
+    it("should handle mixed content with all masking types enabled", () => {
+      const mixedContent = "user@example.com 123-45-6789 -----BEGIN PRIVATE KEY-----MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC7VJTUt9Us8cKB-----END PRIVATE KEY----- " + "a".repeat(200);
+      
+      const config: MaskingConfig = {
+        ...defaultMaskingConfig,
+        enabled: true,
+        maskEmails: true,
+        maskSSNs: true,
+        maskPrivateKeys: true,
+        maskBase64Blobs: true,
+        maskJWTs: true
+      };
+
+      const masked = maskWithConfig(mixedContent, config);
+      expect(masked).toBe("**** **** **** ****");
+    });
+
+    it("should handle mixed content with selective masking", () => {
+      const mixedContent = "user@example.com 123-45-6789 -----BEGIN PRIVATE KEY-----MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC7VJTUt9Us8cKB-----END PRIVATE KEY----- eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c " + "a".repeat(200);
+      
+      const config: MaskingConfig = {
+        ...defaultMaskingConfig,
+        enabled: true,
+        maskEmails: true,
+        maskSSNs: false,
+        maskPrivateKeys: true,
+        maskBase64Blobs: false,
+        maskJWTs: false
+      };
+
+      const masked = maskWithConfig(mixedContent, config);
+      expect(masked).toBe("**** 123-45-6789 **** eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c " + "a".repeat(200));
+    });
   });
 
   describe("Masking Middleware", () => {

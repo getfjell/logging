@@ -4,6 +4,16 @@ Fjell Logging is just another logging library and it's designed to as straightfo
 
 The original author was getting really tired of the existing logging libraries and the level of complexity they added to the codebase.
 
+## Performance Optimized
+
+This logging library is optimized for high-volume trace logging in production environments:
+- **Async logging** prevents event loop blocking
+- **Native JSON.stringify** for maximum performance
+- **Trace level buffering** reduces I/O operations
+- **Early exit optimization** eliminates unnecessary processing
+
+See [PERFORMANCE_IMPROVEMENTS.md](./PERFORMANCE_IMPROVEMENTS.md) for detailed performance information.
+
 ## How do I install it?
 
 `yarn add @fjell/logging`

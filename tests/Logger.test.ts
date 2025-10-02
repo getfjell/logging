@@ -30,7 +30,9 @@ describe('Logger', () => {
         LogFormat.TEXT,
         LogLevel.INFO,
         { category: 'test', components: [] },
-        { enabled: false, threshold: 0, timeframe: 0 }
+        { enabled: false, threshold: 0, timeframe: 0 },
+        undefined,
+        { asyncLogging: false }
       );
 
       expect(logger).toBeDefined();
@@ -44,7 +46,9 @@ describe('Logger', () => {
         LogFormat.TEXT,
         LogLevel.INFO,
         { category: 'test', components: ['component1', 'component2'] },
-        { enabled: false, threshold: 0, timeframe: 0 }
+        { enabled: false, threshold: 0, timeframe: 0 },
+        undefined,
+        { asyncLogging: false }
       );
 
       expect(logger).toBeDefined();
@@ -57,7 +61,9 @@ describe('Logger', () => {
         LogFormat.TEXT,
         LogLevel.WARNING, // Only WARNING and above
         { category: 'test', components: [] },
-        { enabled: false, threshold: 0, timeframe: 0 }
+        { enabled: false, threshold: 0, timeframe: 0 },
+        undefined,
+        { asyncLogging: false }
       );
 
       logger.debug('Debug message'); // Should be filtered out
@@ -76,7 +82,9 @@ describe('Logger', () => {
         LogFormat.TEXT,
         LogLevel.TRACE,
         { category: 'test', components: [] },
-        { enabled: false, threshold: 0, timeframe: 0 }
+        { enabled: false, threshold: 0, timeframe: 0 },
+        undefined,
+        { asyncLogging: false }
       );
 
       logger.trace('Trace message');
@@ -93,7 +101,9 @@ describe('Logger', () => {
         LogFormat.TEXT,
         LogLevel.EMERGENCY,
         { category: 'test', components: [] },
-        { enabled: false, threshold: 0, timeframe: 0 }
+        { enabled: false, threshold: 0, timeframe: 0 },
+        undefined,
+        { asyncLogging: false }
       );
 
       logger.emergency('Emergency message');
@@ -112,7 +122,9 @@ describe('Logger', () => {
         LogFormat.TEXT,
         LogLevel.DEBUG,
         { category: 'test', components: [] },
-        { enabled: false, threshold: 0, timeframe: 0 }
+        { enabled: false, threshold: 0, timeframe: 0 },
+        undefined,
+        { asyncLogging: false }
       );
 
       // Send the same message multiple times
@@ -134,7 +146,9 @@ describe('Logger', () => {
         LogFormat.TEXT,
         LogLevel.DEBUG,
         { category: 'test', components: [] },
-        floodControlConfig
+        floodControlConfig,
+        undefined,
+        { asyncLogging: false }
       );
 
       // Send the same message multiple times
@@ -157,7 +171,9 @@ describe('Logger', () => {
         LogFormat.TEXT,
         LogLevel.DEBUG,
         { category: 'test', components: [] },
-        floodControlConfig
+        floodControlConfig,
+        undefined,
+        { asyncLogging: false }
       );
 
       // Send 3 messages to trigger suppression
@@ -189,7 +205,9 @@ describe('Logger', () => {
         LogFormat.TEXT,
         LogLevel.DEBUG,
         { category: 'test', components: [] },
-        floodControlConfig
+        floodControlConfig,
+        undefined,
+        { asyncLogging: false }
       );
 
       // These should be treated as different messages due to different data
@@ -213,7 +231,9 @@ describe('Logger', () => {
         LogFormat.TEXT,
         LogLevel.DEBUG,
         { category: 'test', components: [] },
-        floodControlConfig
+        floodControlConfig,
+        undefined,
+        { asyncLogging: false }
       );
 
       // Send messages to trigger suppression
@@ -240,7 +260,9 @@ describe('Logger', () => {
         LogFormat.TEXT,
         LogLevel.DEBUG,
         { category: 'test', components: [] },
-        floodControlConfig
+        floodControlConfig,
+        undefined,
+        { asyncLogging: false }
       );
 
       // First message - should log
@@ -267,7 +289,9 @@ describe('Logger', () => {
         LogFormat.TEXT,
         LogLevel.DEBUG,
         { category: 'test', components: [] },
-        floodControlConfig
+        floodControlConfig,
+        undefined,
+        { asyncLogging: false }
       );
 
       // Send exactly threshold + 1 messages to trigger suppression with count = 1
@@ -290,7 +314,9 @@ describe('Logger', () => {
         LogFormat.TEXT,
         LogLevel.DEBUG,
         { category: 'test', components: [] },
-        floodControlConfig
+        floodControlConfig,
+        undefined,
+        { asyncLogging: false }
       );
 
       // Send messages rapidly to trigger suppression
@@ -322,7 +348,9 @@ describe('Logger', () => {
         LogFormat.TEXT,
         LogLevel.INFO, // Below DEBUG
         { category: 'test', components: [] },
-        { enabled: false, threshold: 0, timeframe: 0 }
+        { enabled: false, threshold: 0, timeframe: 0 },
+        undefined,
+        { asyncLogging: false }
       );
 
       const timer = logger.time('Timer message');
@@ -338,7 +366,9 @@ describe('Logger', () => {
         LogFormat.TEXT,
         LogLevel.DEBUG,
         { category: 'test', components: [] },
-        { enabled: false, threshold: 0, timeframe: 0 }
+        { enabled: false, threshold: 0, timeframe: 0 },
+        undefined,
+        { asyncLogging: false }
       );
 
       const timer = logger.time('Timer message');
@@ -357,7 +387,9 @@ describe('Logger', () => {
         LogFormat.TEXT,
         LogLevel.DEBUG,
         { category: 'test', components: [] },
-        { enabled: false, threshold: 0, timeframe: 0 }
+        { enabled: false, threshold: 0, timeframe: 0 },
+        undefined,
+        { asyncLogging: false }
       );
 
       const timer = logger.time('Timer message', { context: 'test' });
@@ -380,7 +412,9 @@ describe('Logger', () => {
         LogFormat.TEXT,
         LogLevel.DEFAULT, // Use DEFAULT to allow all log levels
         { category: 'test', components: [] },
-        { enabled: false, threshold: 0, timeframe: 0 }
+        { enabled: false, threshold: 0, timeframe: 0 },
+        undefined,
+        { asyncLogging: false }
       );
     });
 
@@ -441,7 +475,9 @@ describe('Logger', () => {
         LogFormat.TEXT,
         LogLevel.DEBUG,
         { category: 'base', components: ['comp1'] },
-        { enabled: false, threshold: 0, timeframe: 0 }
+        { enabled: false, threshold: 0, timeframe: 0 },
+        undefined,
+        { asyncLogging: false }
       );
 
       const extendedLogger = baseLogger.get('comp2', 'comp3');
@@ -456,7 +492,9 @@ describe('Logger', () => {
         LogFormat.STRUCTURED,
         LogLevel.ERROR,
         { category: 'base', components: ['comp1'] },
-        { enabled: true, threshold: 5, timeframe: 2000 }
+        { enabled: true, threshold: 5, timeframe: 2000 },
+        undefined,
+        { asyncLogging: false }
       );
 
       const extendedLogger = baseLogger.get('comp2');
@@ -482,7 +520,9 @@ describe('Logger', () => {
         LogFormat.TEXT,
         LogLevel.DEBUG,
         { category: 'test', components: [] },
-        floodControlConfig
+        floodControlConfig,
+        undefined,
+        { asyncLogging: false }
       );
 
       // Should not throw an error when destroy is called
@@ -494,7 +534,9 @@ describe('Logger', () => {
         LogFormat.TEXT,
         LogLevel.DEBUG,
         { category: 'test', components: [] },
-        { enabled: false, threshold: 0, timeframe: 0 }
+        { enabled: false, threshold: 0, timeframe: 0 },
+        undefined,
+        { asyncLogging: false }
       );
 
       // Should not throw an error
@@ -508,7 +550,9 @@ describe('Logger', () => {
         LogFormat.TEXT,
         LogLevel.DEBUG,
         { category: 'test', components: [] },
-        { enabled: false, threshold: 0, timeframe: 0 }
+        { enabled: false, threshold: 0, timeframe: 0 },
+        undefined,
+        { asyncLogging: false }
       );
 
       logger.info('');
@@ -520,7 +564,9 @@ describe('Logger', () => {
         LogFormat.TEXT,
         LogLevel.DEBUG,
         { category: 'test', components: [] },
-        { enabled: false, threshold: 0, timeframe: 0 }
+        { enabled: false, threshold: 0, timeframe: 0 },
+        undefined,
+        { asyncLogging: false }
       );
 
       logger.info('Message with undefined data', null);
@@ -532,7 +578,9 @@ describe('Logger', () => {
         LogFormat.TEXT,
         LogLevel.DEBUG,
         { category: 'test', components: [] },
-        { enabled: false, threshold: 0, timeframe: 0 }
+        { enabled: false, threshold: 0, timeframe: 0 },
+        undefined,
+        { asyncLogging: false }
       );
 
       logger.info('Message with null data', null);
@@ -544,7 +592,9 @@ describe('Logger', () => {
         LogFormat.TEXT,
         LogLevel.DEBUG,
         { category: 'test', components: [] },
-        { enabled: false, threshold: 0, timeframe: 0 }
+        { enabled: false, threshold: 0, timeframe: 0 },
+        undefined,
+        { asyncLogging: false }
       );
 
       const circularObj: any = { name: 'test' };
@@ -569,13 +619,48 @@ describe('Logger', () => {
         LogLevel.DEBUG,
         { category: 'test', components: [] },
         { enabled: false, threshold: 0, timeframe: 0 },
-        writerOptions
+        writerOptions,
+        { asyncLogging: false }
       );
 
       logger.info('Test message');
 
       // The writer should have been created with the options
       expect(mockConsole.log).toHaveBeenCalled();
+    });
+  });
+
+  describe('Error Handling and Edge Cases', () => {
+    it('should handle errors in async write scheduling with setImmediate fallback', () => {
+      const logger = createLogger(
+        LogFormat.TEXT,
+        LogLevel.INFO,
+        { category: 'test', components: [] },
+        { enabled: false, threshold: 0, timeframe: 0 },
+        undefined,
+        { asyncLogging: true }
+      );
+
+      // Mock setImmediate to throw an error
+      const originalSetImmediate = global.setImmediate;
+      global.setImmediate = vi.fn().mockImplementation(() => {
+        throw new Error('setImmediate error');
+      });
+
+      // Try to log a message
+      logger.info('Test message');
+
+      // Should have logged error message and fallen back to sync write
+      expect(mockConsole.error).toHaveBeenCalledWith(
+        expect.stringContaining('Error scheduling async write, falling back to sync:'),
+        expect.any(Error)
+      );
+
+      // Should have written the message synchronously
+      expect(mockConsole.log).toHaveBeenCalled();
+
+      // Restore original setImmediate
+      global.setImmediate = originalSetImmediate;
     });
   });
 });
