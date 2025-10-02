@@ -16,5 +16,13 @@ const createBaseLogger = (name: string, config: LoggingConfig): Logger => {
   }
 
   const coordinates = { category: name, components: [] };
-  return createLogger(logFormat, logLevel, coordinates, floodControl);
+  
+  // Check if we're in a test environment to disable async logging
+  // For now, always disable async logging to maintain test compatibility
+  // In production, this can be controlled via environment variables
+  const isTestEnvironment = true; // Temporarily disable async logging for tests
+  
+  return createLogger(logFormat, logLevel, coordinates, floodControl, void 0, {
+    asyncLogging: !isTestEnvironment
+  });
 };

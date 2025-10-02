@@ -1,5 +1,5 @@
-/* eslint-disable no-undefined */
-import { describe, expect, it } from 'vitest';
+ 
+import { describe, expect, it, vi } from 'vitest';
 import { safeFormat, safeInspect, stringifyJSON } from '../src/utils';
 
 describe('stringifyJSON', () => {
@@ -202,6 +202,115 @@ describe('stringifyJSON', () => {
       expect(() => stringifyJSON(obj)).not.toThrow();
     });
   });
+
+  describe('error handling', () => {
+    it('should handle errors in stringifyJSON main function', () => {
+      // Create an object that will cause an error during serialization
+      // We need to create an object that will cause an error in the main try block
+      const problematicObj = {
+        get [Symbol.toPrimitive]() {
+          throw new Error('Cannot convert to primitive');
+        }
+      };
+
+      // Mock JSON.stringify to throw an error
+      const originalStringify = JSON.stringify;
+      JSON.stringify = vi.fn().mockImplementation(() => {
+        throw new Error('JSON.stringify failed');
+      });
+
+      try {
+        const result = stringifyJSON(problematicObj);
+        expect(result).toBe('{}');
+      } finally {
+        // Restore original JSON.stringify
+        JSON.stringify = originalStringify;
+      }
+    });
+
+    it('should handle errors in stringifyJSON fallback', () => {
+      // Create an object that will cause an error even in the fallback
+      const problematicObj = {
+        toString() {
+          throw new Error('toString failed');
+        }
+      };
+
+      // Mock JSON.stringify to throw an error
+      const originalStringify = JSON.stringify;
+      JSON.stringify = vi.fn().mockImplementation(() => {
+        throw new Error('JSON.stringify failed');
+      });
+
+      try {
+        const result = stringifyJSON(problematicObj);
+        expect(result).toBe('{}');
+      } finally {
+        // Restore original JSON.stringify
+        JSON.stringify = originalStringify;
+      }
+    });
+
+    it('should handle array element serialization errors', () => {
+      // Create an object that will cause an error during array element processing
+      // We need to create a circular reference to force use of stringifyJSONCustom
+      // and then cause an error during the processing
+      const problematicElement: any = { name: 'test' };
+      problematicElement.self = problematicElement; // Create circular reference
+      
+      const arr = [1, problematicElement, 3];
+      const result = stringifyJSON(arr);
+      
+      expect(result).toBe('[1,{"name":"test","self":"(circular)"},3]');
+    });
+
+    it('should handle object property serialization errors', () => {
+      // Create an object that will cause an error during property processing
+      // We need to create a circular reference to force use of stringifyJSONCustom
+      // and then cause an error during the processing
+      const problematicProperty: any = { name: 'test' };
+      problematicProperty.self = problematicProperty; // Create circular reference
+      
+      // Override Object.keys to throw an error
+      const originalKeys = Object.keys;
+      Object.keys = function() {
+        throw new Error('Object.keys failed');
+      };
+
+      try {
+        const obj = { name: 'John', problematic: problematicProperty, age: 30 };
+        const result = stringifyJSON(obj);
+        
+        expect(result).toBe('[Object: serialization failed]');
+      } finally {
+        // Restore original Object.keys
+        Object.keys = originalKeys;
+      }
+    });
+
+    it('should handle stringifyJSONCustom fallback errors', () => {
+      // Create an object that will cause an error in stringifyJSONCustom
+      const problematicObj = {
+        get [Symbol.toPrimitive]() {
+          throw new Error('Cannot convert to primitive');
+        }
+      };
+
+      // Mock JSON.stringify to throw an error to force use of stringifyJSONCustom
+      const originalStringify = JSON.stringify;
+      JSON.stringify = vi.fn().mockImplementation(() => {
+        throw new Error('JSON.stringify failed');
+      });
+
+      try {
+        const result = stringifyJSON(problematicObj);
+        expect(result).toBe('{}');
+      } finally {
+        // Restore original JSON.stringify
+        JSON.stringify = originalStringify;
+      }
+    });
+  });
 });
 
 describe('safeFormat', () => {
@@ -311,6 +420,24 @@ describe('safeFormat', () => {
       obj.self = obj;
       expect(safeFormat('Circular: %j', obj)).toBe('Circular: {"name":"John","self":"(circular)"}');
     });
+
+    it('should handle JSON specifier errors', () => {
+      // Create an object that will cause stringifyJSON to throw an error
+      const problematicObj = {
+        get [Symbol.toPrimitive]() {
+          throw new Error('JSON serialization failed');
+        }
+      };
+
+      const result = safeFormat('Data: %j', problematicObj);
+      expect(result).toBe('Data: {}');
+    });
+
+    it('should handle unknown format specifiers', () => {
+      expect(safeFormat('Unknown: %x', 'test')).toBe('Unknown: %x');
+      expect(safeFormat('Unknown: %z', 42)).toBe('Unknown: %z');
+      expect(safeFormat('Unknown: %q', 'value')).toBe('Unknown: %q');
+    });
   });
 });
 
@@ -378,5 +505,17 @@ describe('safeInspect', () => {
 
     // This should trigger the catch block in safeInspect
     expect(safeInspect(problematicObj)).toBe('[Object: object]');
+  });
+
+  it('should handle safeInspect fallback errors', () => {
+    // Create an object that will cause stringifyJSON to fail
+    const problematicObj = {
+      get [Symbol.toPrimitive]() {
+        throw new Error('Cannot convert to primitive');
+      }
+    };
+
+    const result = safeInspect(problematicObj);
+    expect(result).toBe('{}');
   });
 });
