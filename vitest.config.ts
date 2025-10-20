@@ -3,16 +3,23 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
     globals: true,
-    testTimeout: 30000,
-    include: ['./tests/**/*.test.ts'],
     environment: 'node',
+    include: ['tests/**/*.{test,spec}.ts'],
+    testTimeout: 30000,
     coverage: {
       provider: 'v8',
+      reporter: ['text', 'html', 'lcov'],
+      reportsDirectory: './coverage',
       include: ['src/**/*.{ts,tsx}'],
       exclude: [
         'node_modules/**',
         'tests/**',
         'src/index.ts',
+        '**/*.d.ts',
+        'dist/**',
+        'build.js',
+        'docs/**',
+        'coverage/**',
       ],
       thresholds: {
         global: {
@@ -22,7 +29,6 @@ export default defineConfig({
           statements: 98,
         },
       },
-      reportsDirectory: './coverage',
     },
   },
 });
