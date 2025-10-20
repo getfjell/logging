@@ -4,11 +4,27 @@ Fjell Logging is just another logging library and it's designed to as straightfo
 
 The original author was getting really tired of the existing logging libraries and the level of complexity they added to the codebase.
 
-## Performance Optimized
+## Key Features
+
+### 🛡️ Circular Reference Protection
+
+**Your application will NEVER crash from logging circular references!**
+
+The library automatically handles circular references, BigInt values, Symbols, and other non-serializable objects. Log anything without fear:
+
+```typescript
+const circular: any = { name: 'user' };
+circular.self = circular;
+logger.info('No crash!', circular);  // ✓ Safe - outputs: {"name":"user","self":"(circular)"}
+```
+
+See [CIRCULAR_REFERENCE_PROTECTION.md](./CIRCULAR_REFERENCE_PROTECTION.md) for details and examples.
+
+### ⚡ Performance Optimized
 
 This logging library is optimized for high-volume trace logging in production environments:
 - **Async logging** prevents event loop blocking
-- **Native JSON.stringify** for maximum performance
+- **Circular-safe serialization** for maximum reliability
 - **Trace level buffering** reduces I/O operations
 - **Early exit optimization** eliminates unnecessary processing
 
