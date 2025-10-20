@@ -1,6 +1,6 @@
 {
   "name": "@fjell/logging",
-  "version": "4.4.49",
+  "version": "4.4.50",
   "description": "Logging for Fjell",
   "type": "module",
   "main": "./dist/index.js",
@@ -43,7 +43,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.32.0",
-    "@fjell/eslint-config": "^1.1.25",
+    "@fjell/eslint-config": "^1.1.28",
     "@tsconfig/recommended": "^1.0.10",
     "@types/node": "^24.1.0",
     "@typescript-eslint/eslint-plugin": "^8.38.0",
