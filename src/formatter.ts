@@ -2,7 +2,7 @@
 
 import * as LogFormat from "./LogFormat";
 import * as LogLevel from "./LogLevel";
-import { safeFormat, safeInspect } from "./utils";
+import { safeFormat, safeInspect, safeJSONStringify } from "./utils";
 
 export interface Formatter {
 
@@ -83,7 +83,8 @@ export const getStructuredFormatter = (): Formatter => {
     const severity = level.name;
     const hasSpecifiers = /%[sdjifoO%]/.test(payload.message);
 
-    return JSON.stringify({
+    // CRITICAL: Use safeJSONStringify to prevent circular reference errors from crashing the app
+    return safeJSONStringify({
       severity,
       message: hasSpecifiers ? safeFormat(payload.message, ...payload.data) : payload.message,
       "logging.googleapis.com/labels": {
@@ -102,7 +103,8 @@ export const getStructuredFormatter = (): Formatter => {
     const severity = level.name;
 
     const randomInt = Math.floor(Math.random() * 1000000);
-    return JSON.stringify({
+    // CRITICAL: Use safeJSONStringify to prevent circular reference errors from crashing the app
+    return safeJSONStringify({
       severity,
       message: safeFormat(payload.message, ...payload.data),
       "logging.googleapis.com/labels": {

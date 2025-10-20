@@ -3,49 +3,25 @@
  */
 
 /**
- * Optimized JSON stringify that uses native JSON.stringify for performance
- * Falls back to custom implementation only when circular references are detected
- * Includes comprehensive error handling to prevent crashes
+ * CRITICAL: Safe JSON stringify that NEVER throws and handles circular references
+ * This function is designed to prevent application crashes from non-serializable objects
+ *
+ * Features:
+ * - Handles circular references gracefully
+ * - Never throws errors (returns safe fallback strings instead)
+ * - Uses custom implementation for consistent behavior
+ * - Maintains compatibility with existing tests
  */
 export const stringifyJSON = function (obj: any, visited: Set<any> = new Set()): string {
   try {
-    // For primitive types, use custom implementation to match test expectations
-    if (obj === null || typeof obj !== 'object') {
-      return stringifyJSONCustom(obj, visited);
-    }
-
-    // For special objects that native JSON.stringify handles differently,
-    // use custom implementation to maintain backward compatibility
-    if (obj instanceof Date ||
-        obj instanceof RegExp ||
-        obj instanceof Error ||
-        typeof obj === 'symbol' ||
-        typeof obj === 'function' ||
-        (typeof obj === 'object' && obj.constructor && obj.constructor.name === 'Buffer')) {
-      return stringifyJSONCustom(obj, visited);
-    }
-
-    // For arrays and objects, try native JSON.stringify first
-    try {
-      const result = JSON.stringify(obj);
-      // Check if this is the specific test case that expects unescaped quotes
-      if (result.includes('\\"') && typeof obj === 'object' && !Array.isArray(obj)) {
-        // This might be a test case expecting the old behavior, use custom implementation
-        return stringifyJSONCustom(obj, visited);
-      }
-      return result;
-    } catch {
-      // If native JSON.stringify fails (likely due to circular references),
-      // fall back to the custom implementation
-      return stringifyJSONCustom(obj, visited);
-    }
+    return stringifyJSONCustom(obj, visited);
   } catch (error) {
-    // If everything fails, return a safe fallback string
-    console.error('[Fjell Logging] Error in stringifyJSON, using fallback:', error);
+    // If everything fails, return a safe fallback string that won't crash the app
+    console.error('[Fjell Logging] Critical error in stringifyJSON, using ultimate fallback:', error);
     try {
-      return `[Object: ${typeof obj}]`;
+      return `"[Object: ${typeof obj}]"`;
     } catch {
-      return '[Object: unknown]';
+      return '"[Object: unknown]"';
     }
   }
 };
@@ -218,5 +194,80 @@ export const safeInspect = (obj: any): string => {
   } catch {
     // If stringifyJSON fails, fall back to a safe representation
     return `[Object: ${typeof obj}]`;
+  }
+};
+
+/**
+ * CRITICAL: Safe JSON.stringify for entire log entries
+ * This is specifically for structured logging where the entire log object is stringified
+ * NEVER throws - will return a safe error message instead of crashing the application
+ *
+ * @param obj - The log entry object to stringify
+ * @returns A JSON string that is guaranteed to be serializable
+ */
+export const safeJSONStringify = (obj: any): string => {
+  try {
+    const seen = new WeakSet();
+    
+    return JSON.stringify(obj, (key, value) => {
+      try {
+        // Handle special cases that JSON.stringify doesn't handle well
+        if (typeof value === 'symbol') {
+          return String(value);
+        }
+        
+        if (typeof value === 'function') {
+          return '[Function]';
+        }
+        
+        // CRITICAL: Circular reference detection - must come before other object checks
+        if (typeof value === 'object' && value !== null) {
+          if (seen.has(value)) {
+            return '[Circular Reference]';
+          }
+          seen.add(value);
+        }
+        
+        if (value instanceof Error) {
+          return {
+            name: value.name,
+            message: value.message,
+            stack: value.stack,
+          };
+        }
+        
+        if (value instanceof RegExp) {
+          return value.toString();
+        }
+        
+        if (value instanceof Date) {
+          return value.toISOString();
+        }
+        
+        return value;
+      } catch (error) {
+        // If processing this value fails, return a safe placeholder
+        console.error('[Fjell Logging] Error processing value in replacer:', error);
+        return '[Error: unable to serialize value]';
+      }
+    });
+  } catch (error) {
+    // CRITICAL: If JSON.stringify completely fails, return a safe fallback
+    // This prevents the entire application from crashing
+    console.error('[Fjell Logging] CRITICAL: safeJSONStringify failed, returning fallback:', error);
+    
+    try {
+      // Try to at least preserve the message if it exists
+      const message = obj?.message || obj?.severity || 'Unknown';
+      return JSON.stringify({
+        severity: 'ERROR',
+        message: '[Fjell Logging] Failed to serialize log entry',
+        originalMessage: String(message),
+        error: 'Circular reference or non-serializable object detected'
+      });
+    } catch {
+      // Ultimate fallback - this should never fail
+      return '{"severity":"ERROR","message":"[Fjell Logging] Critical serialization failure"}';
+    }
   }
 };
