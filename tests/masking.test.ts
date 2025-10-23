@@ -850,13 +850,14 @@ MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC7VJTUt9Us8cKB
     });
 
     it("should handle large strings efficiently", () => {
-      const largeString = "user@example.com ".repeat(10000);
+      // Use 5000 repetitions (85,000 chars) to stay under MAX_STRING_LENGTH (100,000)
+      const largeString = "user@example.com ".repeat(5000);
 
       const start = performance.now();
       const masked = maskString(largeString);
       const end = performance.now();
 
-      expect(masked).toBe("**** ".repeat(10000));
+      expect(masked).toBe("**** ".repeat(5000));
       expect(end - start).toBeLessThan(50); // Should complete in under 50ms
     });
 
@@ -879,6 +880,125 @@ MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC7VJTUt9Us8cKB
       expect(masked.nested.emails[0]).toBe("****");
       expect(masked.nested.safe[0]).toBe("safe0");
       expect(end - start).toBeLessThan(100); // Should complete in under 100ms
+    });
+  });
+
+  describe("ReDoS Protection", () => {
+    it("should protect against ReDoS attacks with malicious email-like patterns", () => {
+      // This pattern could cause catastrophic backtracking with the old regex
+      const maliciousInput = "a".repeat(1000) + "@" + ".".repeat(1000);
+
+      const start = performance.now();
+      const result = maskString(maliciousInput);
+      const end = performance.now();
+
+      // Should complete quickly (under 50ms) even with malicious input
+      expect(end - start).toBeLessThan(50);
+      // Result should be a string (not hung)
+      expect(typeof result).toBe("string");
+    });
+
+    it("should protect against ReDoS with repeated special characters before @", () => {
+      const maliciousInput = "a" + ".".repeat(5000) + "@example.com";
+
+      const start = performance.now();
+      const result = maskString(maliciousInput);
+      const end = performance.now();
+
+      expect(end - start).toBeLessThan(50);
+      expect(typeof result).toBe("string");
+    });
+
+    it("should protect against ReDoS with repeated hyphens in domain", () => {
+      const maliciousInput = "user@" + "-".repeat(5000) + ".com";
+
+      const start = performance.now();
+      const result = maskString(maliciousInput);
+      const end = performance.now();
+
+      expect(end - start).toBeLessThan(50);
+      expect(typeof result).toBe("string");
+    });
+
+    it("should handle extremely long strings by masking them entirely", () => {
+      const extremelyLongString = "a".repeat(150000); // Exceeds MAX_STRING_LENGTH (100000)
+
+      const start = performance.now();
+      const result = maskString(extremelyLongString);
+      const end = performance.now();
+
+      // Should complete very quickly by masking the entire string
+      expect(end - start).toBeLessThan(10);
+      expect(result).toBe("****");
+    });
+
+    it("should handle normal emails efficiently with new pattern", () => {
+      const normalEmails = [
+        "user@example.com",
+        "john.doe@company.co.uk",
+        "test+tag@subdomain.example.org",
+        "admin123@test-domain.io"
+      ];
+
+      for (const email of normalEmails) {
+        const start = performance.now();
+        const result = maskString(email);
+        const end = performance.now();
+
+        expect(end - start).toBeLessThan(5);
+        expect(result).toBe("****");
+      }
+    });
+
+    it("should protect against ReDoS in maskWithConfig", () => {
+      const config: MaskingConfig = {
+        enabled: true,
+        maskEmails: true,
+        maskSSNs: true,
+        maskPrivateKeys: true,
+        maskBase64Blobs: true,
+        maskJWTs: true,
+        maxDepth: 8
+      };
+
+      const maliciousInput = "user" + ".".repeat(5000) + "@" + "-".repeat(5000);
+
+      const start = performance.now();
+      const result = maskWithConfig(maliciousInput, config);
+      const end = performance.now();
+
+      expect(end - start).toBeLessThan(50);
+      expect(typeof result).toBe("string");
+    });
+
+    it("should mask oversized strings in nested objects", () => {
+      const hugeString = "x".repeat(150000);
+      const obj = {
+        normal: "test@example.com",
+        huge: hugeString,
+        nested: {
+          alsoHuge: hugeString
+        }
+      };
+
+      const config: MaskingConfig = {
+        enabled: true,
+        maskEmails: true,
+        maskSSNs: true,
+        maskPrivateKeys: true,
+        maskBase64Blobs: true,
+        maskJWTs: true,
+        maxDepth: 8
+      };
+
+      const start = performance.now();
+      const result = maskWithConfig(obj, config);
+      const end = performance.now();
+
+      expect(end - start).toBeLessThan(50);
+      expect(result.normal).toBe("****"); // Email masked
+      expect(result.huge).toBe("****"); // Oversized string masked
+      expect(result.nested.alsoHuge).toBe("****"); // Nested oversized string masked
     });
   });
 });

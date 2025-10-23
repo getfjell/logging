@@ -1,6 +1,6 @@
  
 import { describe, expect, it, vi } from 'vitest';
-import { safeFormat, safeInspect, stringifyJSON } from '../src/utils';
+import { safeFormat, safeInspect, safeJSONStringify, stringifyJSON } from '../src/utils';
 
 describe('stringifyJSON', () => {
   describe('primitive types', () => {
@@ -170,6 +170,11 @@ describe('stringifyJSON', () => {
       expect(stringifyJSON(set)).toBe('{}');
     });
 
+    it('should handle function objects', () => {
+      const func = () => 'test';
+      expect(stringifyJSON(func)).toBe('');
+    });
+
     it('should handle Buffer objects (Node.js)', () => {
       // Buffer objects are serialized as objects with numeric keys
       const buffer = Buffer.from('test');
@@ -310,6 +315,29 @@ describe('stringifyJSON', () => {
         JSON.stringify = originalStringify;
       }
     });
+
+    it('should handle stringifyJSON main function errors', () => {
+      // Create an object that will cause an error in the main try block
+      const problematicObj = {
+        get [Symbol.toPrimitive]() {
+          throw new Error('Cannot convert to primitive');
+        }
+      };
+
+      // Mock JSON.stringify to throw an error
+      const originalStringify = JSON.stringify;
+      JSON.stringify = vi.fn().mockImplementation(() => {
+        throw new Error('JSON.stringify failed');
+      });
+
+      try {
+        const result = stringifyJSON(problematicObj);
+        expect(result).toBe('{}');
+      } finally {
+        // Restore original
+        JSON.stringify = originalStringify;
+      }
+    });
   });
 });
 
@@ -433,6 +461,20 @@ describe('safeFormat', () => {
       expect(result).toBe('Data: {}');
     });
 
+    it('should handle JSON specifier errors with catch block', () => {
+      // Create an object that will cause stringifyJSON to throw an error
+      const problematicObj = {
+        get [Symbol.toPrimitive]() {
+          throw new Error('JSON serialization failed');
+        }
+      };
+
+      // This test verifies that the catch block in safeFormat works
+      // The actual stringifyJSON function should handle this gracefully
+      const result = safeFormat('Data: %j', problematicObj);
+      expect(result).toBe('Data: {}');
+    });
+
     it('should handle unknown format specifiers', () => {
       expect(safeFormat('Unknown: %x', 'test')).toBe('Unknown: %x');
       expect(safeFormat('Unknown: %z', 42)).toBe('Unknown: %z');
@@ -517,5 +559,133 @@ describe('safeInspect', () => {
 
     const result = safeInspect(problematicObj);
     expect(result).toBe('{}');
+  });
+});
+
+describe('safeJSONStringify', () => {
+  it('should handle simple objects', () => {
+    const obj = { name: 'John', age: 30 };
+    expect(safeJSONStringify(obj)).toBe('{"name":"John","age":30}');
+  });
+
+  it('should handle arrays', () => {
+    const arr = [1, 2, 3];
+    expect(safeJSONStringify(arr)).toBe('[1,2,3]');
+  });
+
+  it('should handle primitives', () => {
+    expect(safeJSONStringify('hello')).toBe('"hello"');
+    expect(safeJSONStringify(42)).toBe('42');
+    expect(safeJSONStringify(true)).toBe('true');
+    expect(safeJSONStringify(null)).toBe('null');
+  });
+
+  it('should handle symbols', () => {
+    const symbol = Symbol('test');
+    const result = safeJSONStringify({ symbol });
+    expect(result).toBe('{"symbol":"Symbol(test)"}');
+  });
+
+  it('should handle functions', () => {
+    const func = () => 'test';
+    const result = safeJSONStringify({ func });
+    expect(result).toBe('{"func":"[Function]"}');
+  });
+
+  it('should handle circular references', () => {
+    const obj: any = { name: 'John' };
+    obj.self = obj;
+    const result = safeJSONStringify(obj);
+    expect(result).toBe('{"name":"John","self":"[Circular Reference]"}');
+  });
+
+  it('should handle Error objects', () => {
+    const error = new Error('test error');
+    const result = safeJSONStringify({ error });
+    expect(result).toContain('"name":"Error"');
+    expect(result).toContain('"message":"test error"');
+  });
+
+  it('should handle RegExp objects', () => {
+    const regex = /test/gi;
+    const result = safeJSONStringify({ regex });
+    expect(result).toBe('{"regex":"/test/gi"}');
+  });
+
+  it('should handle Date objects', () => {
+    const date = new Date('2023-01-01T00:00:00.000Z');
+    const result = safeJSONStringify({ date });
+    expect(result).toContain('"date":"2023-01-01T00:00:00.000Z"');
+  });
+
+  it('should handle replacer function errors', () => {
+    // Create an object that will cause the replacer function to throw
+    const problematicObj = {
+      get problematic() {
+        throw new Error('Replacer error');
+      }
+    };
+
+    const result = safeJSONStringify(problematicObj);
+    expect(result).toContain('"severity":"ERROR"');
+    expect(result).toContain('[Fjell Logging] Failed to serialize log entry');
+  });
+
+  it('should handle complete JSON.stringify failure', () => {
+    // Mock JSON.stringify to throw an error
+    const originalStringify = JSON.stringify;
+    JSON.stringify = vi.fn().mockImplementation(() => {
+      throw new Error('JSON.stringify failed');
+    });
+
+    try {
+      const obj = { name: 'John', age: 30 };
+      const result = safeJSONStringify(obj);
+      
+      expect(result).toContain('"severity":"ERROR"');
+      expect(result).toContain('[Fjell Logging] Critical serialization failure');
+    } finally {
+      // Restore original JSON.stringify
+      JSON.stringify = originalStringify;
+    }
+  });
+
+  it('should handle objects with message property', () => {
+    const obj = { message: 'Test message', severity: 'INFO' };
+    const result = safeJSONStringify(obj);
+    expect(result).toBe('{"message":"Test message","severity":"INFO"}');
+  });
+
+  it('should handle objects with severity property', () => {
+    const obj = { severity: 'ERROR' };
+    const result = safeJSONStringify(obj);
+    expect(result).toBe('{"severity":"ERROR"}');
+  });
+
+  it('should handle objects with neither message nor severity', () => {
+    const obj = { data: 'test' };
+    const result = safeJSONStringify(obj);
+    expect(result).toBe('{"data":"test"}');
+  });
+
+  it('should handle Date objects in safeJSONStringify', () => {
+    const date = new Date('2023-01-01T00:00:00.000Z');
+    const obj = { timestamp: date, message: 'Test' };
+    const result = safeJSONStringify(obj);
+    expect(result).toContain('"timestamp":"2023-01-01T00:00:00.000Z"');
+    expect(result).toContain('"message":"Test"');
+  });
+
+  it('should handle error processing in replacer function', () => {
+    // Create an object that will cause the replacer to throw an error
+    const problematicObj = {
+      get problematic() {
+        throw new Error('Replacer processing error');
+      }
+    };
+
+    const result = safeJSONStringify(problematicObj);
+    expect(result).toContain('"severity":"ERROR"');
+    expect(result).toContain('[Fjell Logging] Failed to serialize log entry');
   });
 });

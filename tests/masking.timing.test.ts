@@ -73,7 +73,7 @@ describe('Masking Timing', () => {
   ];
 
   it('should measure the performance overhead of string masking', () => {
-    const iterations = 10000;
+    const iterations = 16000;
 
     // Test without masking
     const startNoMasking = performance.now();
