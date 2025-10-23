@@ -767,6 +767,46 @@ describe('Logger', () => {
       // Restore original
       console.error = originalConsoleError;
     });
+
+    it('should handle errors when clearing debug flush timer during destroy', () => {
+      const logger = createLogger(
+        LogFormat.TEXT,
+        LogLevel.DEBUG,
+        { category: 'test', components: [] },
+        { enabled: false, threshold: 0, timeframe: 0 },
+        undefined,
+        { asyncLogging: true }
+      );
+
+      // Log some debug messages to trigger buffering and set up a timer
+      logger.debug('Debug message 1');
+      logger.trace('Trace message 1');
+
+      // Wait a bit to ensure timer is set
+      return new Promise(resolve => {
+        setTimeout(() => {
+          // Mock clearTimeout to throw an error
+          const originalClearTimeout = global.clearTimeout;
+          global.clearTimeout = vi.fn().mockImplementation(() => {
+            throw new Error('clearTimeout error');
+          });
+
+          // Should not throw an error when destroy is called
+          expect(() => logger.destroy()).not.toThrow();
+
+          // Should have logged error message
+          expect(mockConsole.error).toHaveBeenCalledWith(
+            expect.stringContaining('Error clearing debug flush timer during destroy:'),
+            expect.any(Error)
+          );
+
+          // Restore original
+          global.clearTimeout = originalClearTimeout;
+          resolve(null);
+        }, 50);
+      });
+    });
+
   });
 
 });

@@ -667,4 +667,25 @@ describe('safeJSONStringify', () => {
     const result = safeJSONStringify(obj);
     expect(result).toBe('{"data":"test"}');
   });
+
+  it('should handle Date objects in safeJSONStringify', () => {
+    const date = new Date('2023-01-01T00:00:00.000Z');
+    const obj = { timestamp: date, message: 'Test' };
+    const result = safeJSONStringify(obj);
+    expect(result).toContain('"timestamp":"2023-01-01T00:00:00.000Z"');
+    expect(result).toContain('"message":"Test"');
+  });
+
+  it('should handle error processing in replacer function', () => {
+    // Create an object that will cause the replacer to throw an error
+    const problematicObj = {
+      get problematic() {
+        throw new Error('Replacer processing error');
+      }
+    };
+
+    const result = safeJSONStringify(problematicObj);
+    expect(result).toContain('"severity":"ERROR"');
+    expect(result).toContain('[Fjell Logging] Failed to serialize log entry');
+  });
 });
