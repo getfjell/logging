@@ -14,9 +14,13 @@ const BASE64_BLOB_PATTERN = /[A-Za-z0-9+/=]{200,}/g;
 
 const JWT_PATTERN = /^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/;
 
-const EMAIL_PATTERN = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/g;
+// ReDoS-safe email pattern: limits consecutive special characters and uses more specific matching
+const EMAIL_PATTERN = /\b[A-Za-z0-9][A-Za-z0-9._%+-]{0,63}@[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*\.[A-Za-z]{2,}\b/g;
 
 const SSN_PATTERN = /\b\d{3}-\d{2}-\d{4}\b|\b\d{9}\b/g;
+
+// Maximum string length to process for regex patterns (security limit)
+const MAX_STRING_LENGTH = 100000;
 
 /**
  * Masks sensitive data in a string
@@ -26,6 +30,11 @@ const SSN_PATTERN = /\b\d{3}-\d{2}-\d{4}\b|\b\d{9}\b/g;
 export function maskString(input: string): string {
   if (typeof input !== 'string' || input.length === 0) {
     return input;
+  }
+
+  // Security: Avoid processing extremely long strings that could cause ReDoS
+  if (input.length > MAX_STRING_LENGTH) {
+    return '****'; // Mask the entire oversized string
   }
 
   let masked = input;
@@ -152,6 +161,11 @@ export function maskWithConfig<T>(
   const customMaskString = (str: string): string => {
     if (typeof str !== 'string' || str.length === 0) {
       return str;
+    }
+
+    // Security: Avoid processing extremely long strings that could cause ReDoS
+    if (str.length > MAX_STRING_LENGTH) {
+      return '****'; // Mask the entire oversized string
     }
 
     let masked = str;

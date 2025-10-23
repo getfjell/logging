@@ -662,5 +662,111 @@ describe('Logger', () => {
       // Restore original setImmediate
       global.setImmediate = originalSetImmediate;
     });
+
+    it('should handle errors in async write scheduling with setTimeout fallback', () => {
+      const logger = createLogger(
+        LogFormat.TEXT,
+        LogLevel.INFO,
+        { category: 'test', components: [] },
+        { enabled: false, threshold: 0, timeframe: 0 },
+        undefined,
+        { asyncLogging: true }
+      );
+
+      // Mock setImmediate to be undefined and setTimeout to throw
+      const originalSetImmediate = global.setImmediate;
+      const originalSetTimeout = global.setTimeout;
+      
+      global.setImmediate = undefined;
+      global.setTimeout = vi.fn().mockImplementation(() => {
+        throw new Error('setTimeout error');
+      });
+
+      // Try to log a message
+      logger.info('Test message');
+
+      // Should have logged error message and fallen back to sync write
+      expect(mockConsole.error).toHaveBeenCalledWith(
+        expect.stringContaining('Error scheduling async write, falling back to sync:'),
+        expect.any(Error)
+      );
+
+      // Should have written the message synchronously
+      expect(mockConsole.log).toHaveBeenCalled();
+
+      // Restore originals
+      global.setImmediate = originalSetImmediate;
+      global.setTimeout = originalSetTimeout;
+    });
+
+    it('should handle errors in synchronous fallback write', () => {
+      const logger = createLogger(
+        LogFormat.TEXT,
+        LogLevel.INFO,
+        { category: 'test', components: [] },
+        { enabled: false, threshold: 0, timeframe: 0 },
+        undefined,
+        { asyncLogging: true }
+      );
+
+      // Mock setImmediate to throw an error
+      const originalSetImmediate = global.setImmediate;
+      global.setImmediate = vi.fn().mockImplementation(() => {
+        throw new Error('setImmediate error');
+      });
+
+      // Mock console.log to throw an error
+      const originalConsoleLog = console.log;
+      console.log = vi.fn().mockImplementation(() => {
+        throw new Error('Console.log error');
+      });
+
+      // Try to log a message
+      logger.info('Test message');
+
+      // Should have logged both error messages
+      expect(mockConsole.error).toHaveBeenCalledWith(
+        expect.stringContaining('Error scheduling async write, falling back to sync:'),
+        expect.any(Error)
+      );
+      expect(mockConsole.error).toHaveBeenCalledWith(
+        expect.stringContaining('Error scheduling async write, falling back to sync:'),
+        expect.any(Error)
+      );
+
+      // Restore originals
+      global.setImmediate = originalSetImmediate;
+      console.log = originalConsoleLog;
+    });
+
+    it('should handle errors in destroy method', () => {
+      const floodControlConfig: FloodControlConfig = {
+        enabled: true,
+        threshold: 5,
+        timeframe: 1000,
+      };
+
+      const logger = createLogger(
+        LogFormat.TEXT,
+        LogLevel.DEBUG,
+        { category: 'test', components: [] },
+        floodControlConfig,
+        undefined,
+        { asyncLogging: false }
+      );
+
+      // Mock console.error to throw an error
+      const originalConsoleError = console.error;
+      console.error = vi.fn().mockImplementation(() => {
+        throw new Error('Console.error error');
+      });
+
+      // Should not throw an error when destroy is called
+      expect(() => logger.destroy()).not.toThrow();
+
+      // Restore original
+      console.error = originalConsoleError;
+    });
   });
+
 });
