@@ -27,9 +27,18 @@ export const stringifyJSON = function (obj: any, visited: Set<any> = new Set()):
 };
 
 /**
+ * Configuration for stringifyJSONCustom to prevent memory issues with large data structures
+ */
+const STRINGIFY_CONFIG = {
+  MAX_ARRAY_ELEMENTS: 100,
+  MAX_OBJECT_PROPERTIES: 100,
+  TRUNCATION_MESSAGE: '...[truncated]'
+};
+
+/**
  * Custom recursive implementation of JSON.stringify that handles circular references safely
  * This is only used as a fallback when native JSON.stringify fails
- * Includes comprehensive error handling to prevent crashes
+ * Includes comprehensive error handling to prevent crashes and large data structure limits
  */
 const stringifyJSONCustom = function (obj: any, visited: Set<any> = new Set()): string {
   try {
@@ -75,19 +84,36 @@ const stringifyJSONCustom = function (obj: any, visited: Set<any> = new Set()): 
         // Add array to visited before processing its elements
         visited.add(obj);
         try {
-          obj.forEach(function (el) {
+          const maxElements = STRINGIFY_CONFIG.MAX_ARRAY_ELEMENTS;
+          const shouldTruncate = obj.length > maxElements;
+          const elementsToProcess = shouldTruncate ? maxElements : obj.length;
+          
+          for (let i = 0; i < elementsToProcess; i++) {
             try {
-              arrVals.push(stringifyJSONCustom(el, visited));
+              arrVals.push(stringifyJSONCustom(obj[i], visited));
             } catch {
               // If individual array element fails, add error placeholder
               arrVals.push('"[Error serializing array element]"');
             }
-          });
+          }
+          
+          // Add truncation message if needed
+          if (shouldTruncate) {
+            arrVals.push(`"${STRINGIFY_CONFIG.TRUNCATION_MESSAGE} (${obj.length - maxElements} more items)"`);
+          }
         } finally {
           // Remove array from visited after processing to prevent memory leaks
           visited.delete(obj);
         }
-        return '[' + arrVals + ']';
+        
+        // Use explicit join() instead of implicit toString() to prevent string length errors
+        try {
+          return '[' + arrVals.join(',') + ']';
+        } catch {
+          // If join() fails due to string length, return truncated representation
+          console.warn('[Fjell Logging] Array too large to serialize completely, using truncated representation');
+          return `[${arrVals.slice(0, 10).join(',')},${STRINGIFY_CONFIG.TRUNCATION_MESSAGE}]`;
+        }
       }
     }
     // Check for object
@@ -97,14 +123,19 @@ const stringifyJSONCustom = function (obj: any, visited: Set<any> = new Set()): 
       try {
         // Get object keys
         objKeys = Object.keys(obj);
-        // Set key output
-        objKeys.forEach(function (key) {
+        const maxProperties = STRINGIFY_CONFIG.MAX_OBJECT_PROPERTIES;
+        const shouldTruncate = objKeys.length > maxProperties;
+        const propertiesToProcess = shouldTruncate ? maxProperties : objKeys.length;
+        
+        // Set key output with limit
+        for (let i = 0; i < propertiesToProcess; i++) {
+          const key = objKeys[i];
           try {
             const keyOut = '"' + key + '":';
             const keyValOut = obj[key];
             // Skip functions and undefined properties
             if (keyValOut instanceof Function || typeof keyValOut === 'undefined')
-              return; // Skip this entry entirely instead of pushing an empty string
+              continue; // Skip this entry entirely instead of pushing an empty string
             else if (typeof keyValOut === 'string')
               arrOfKeyVals.push(keyOut + '"' + keyValOut + '"');
             else if (typeof keyValOut === 'boolean' || typeof keyValOut === 'number' || keyValOut === null)
@@ -117,12 +148,25 @@ const stringifyJSONCustom = function (obj: any, visited: Set<any> = new Set()): 
             // If individual property fails, add error placeholder
             arrOfKeyVals.push('"' + key + '":"[Error serializing property]"');
           }
-        });
+        }
+        
+        // Add truncation message if needed
+        if (shouldTruncate) {
+          arrOfKeyVals.push(`"${STRINGIFY_CONFIG.TRUNCATION_MESSAGE}":"(${objKeys.length - maxProperties} more properties)"`);
+        }
       } finally {
         // Remove object from visited after processing to prevent memory leaks
         visited.delete(obj);
       }
-      return '{' + arrOfKeyVals + '}';
+      
+      // Use explicit join() instead of implicit toString() to prevent string length errors
+      try {
+        return '{' + arrOfKeyVals.join(',') + '}';
+      } catch {
+        // If join() fails due to string length, return truncated representation
+        console.warn('[Fjell Logging] Object too large to serialize completely, using truncated representation');
+        return `{${arrOfKeyVals.slice(0, 10).join(',')},${STRINGIFY_CONFIG.TRUNCATION_MESSAGE}}`;
+      }
     }
     return '';
   } catch (error) {

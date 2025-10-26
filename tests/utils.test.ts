@@ -208,6 +208,89 @@ describe('stringifyJSON', () => {
     });
   });
 
+  describe('large data structures', () => {
+    it('should handle large arrays without string length errors', () => {
+      // Create a large array that would previously cause "Invalid string length" error
+      const largeArray = Array.from({ length: 1000 }, (_, i) => ({ id: i, name: `Item ${i}` }));
+      
+      expect(() => stringifyJSON(largeArray)).not.toThrow();
+      
+      const result = stringifyJSON(largeArray);
+      expect(result).toContain('...[truncated]');
+      expect(result).toContain('(900 more items)');
+      expect(result).toMatch(/^\[.*\]$/); // Should be valid JSON array format
+    });
+
+    it('should handle large objects without string length errors', () => {
+      // Create a large object that would previously cause "Invalid string length" error
+      const largeObject: any = {};
+      for (let i = 0; i < 1000; i++) {
+        largeObject[`key${i}`] = `value${i}`;
+      }
+      
+      expect(() => stringifyJSON(largeObject)).not.toThrow();
+      
+      const result = stringifyJSON(largeObject);
+      expect(result).toContain('...[truncated]');
+      expect(result).toContain('(900 more properties)');
+      expect(result).toMatch(/^\{.*\}$/); // Should be valid JSON object format
+    });
+
+    it('should limit array elements to configured maximum', () => {
+      const array = Array.from({ length: 150 }, (_, i) => i);
+      const result = stringifyJSON(array);
+      
+      // Should contain exactly 100 elements plus truncation message
+      const elements = result.slice(1, -1).split(',');
+      expect(elements.length).toBe(101); // 100 elements + 1 truncation message
+      expect(result).toContain('...[truncated] (50 more items)');
+    });
+
+    it('should limit object properties to configured maximum', () => {
+      const obj: any = {};
+      for (let i = 0; i < 150; i++) {
+        obj[`prop${i}`] = i;
+      }
+      const result = stringifyJSON(obj);
+      
+      // Should contain exactly 100 properties plus truncation message
+      const properties = result.slice(1, -1).split(',');
+      expect(properties.length).toBe(101); // 100 properties + 1 truncation message
+      expect(result).toContain('...[truncated]":"(50 more properties)');
+    });
+
+    it('should handle extremely large arrays gracefully', () => {
+      // Create an array that would definitely cause string length issues
+      const hugeArray = Array.from({ length: 10000 }, (_, i) => ({
+        id: i,
+        data: `Very long string data for item ${i} that would make the serialized string extremely long`
+      }));
+      
+      expect(() => stringifyJSON(hugeArray)).not.toThrow();
+      
+      const result = stringifyJSON(hugeArray);
+      expect(result).toContain('...[truncated]');
+      expect(result).toContain('(9900 more items)'); // Should show correct truncation count
+      expect(result).toMatch(/^\[.*\]$/); // Should be valid JSON array format
+    });
+
+    it('should handle nested large structures', () => {
+      const nestedLarge = {
+        users: Array.from({ length: 200 }, (_, i) => ({ id: i, name: `User ${i}` })),
+        metadata: {
+          tags: Array.from({ length: 200 }, (_, i) => `tag${i}`),
+          config: Array.from({ length: 200 }, (_, i) => ({ key: `config${i}`, value: i }))
+        }
+      };
+      
+      expect(() => stringifyJSON(nestedLarge)).not.toThrow();
+      
+      const result = stringifyJSON(nestedLarge);
+      expect(result).toContain('...[truncated]');
+      expect(result).toMatch(/^\{.*\}$/); // Should be valid JSON object format
+    });
+  });
+
   describe('error handling', () => {
     it('should handle errors in stringifyJSON main function', () => {
       // Create an object that will cause an error during serialization
