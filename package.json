@@ -54,7 +54,7 @@
     "eslint": "^9.38.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
-    "vitest": "^4.0.1"
+    "vitest": "^4.0.9"
   },
   "repository": {
     "type": "git",
