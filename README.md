@@ -43,7 +43,7 @@ LOGGING_CONFIG=`
     "logFormat": "TEXT",
     "overrides": {
         "@myproject/core": { "logLevel": "INFO" },
-        "@myproject/wagner-lib": { "logLevel": "DEBUG" },
+        "@myproject/lib": { "logLevel": "DEBUG" },
         "@myproject/express-router": { "logLevel": "DEFAULT" },
     }
 }
@@ -114,7 +114,7 @@ LOGGING_CONFIG=`
     "logFormat": "TEXT",
     "overrides": {
         "@myproject/core": { "logLevel": "INFO" },
-        "@myproject/wagner-lib": { "logLevel": "DEBUG" },
+        "@myproject/lib": { "logLevel": "DEBUG" },
         "@myproject/express-router": { "logLevel": "DEFAULT" },
     }
 }
