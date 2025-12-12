@@ -32,6 +32,7 @@ describe('Logger', () => {
         { category: 'test', components: [] },
         { enabled: false, threshold: 0, timeframe: 0 },
         undefined,
+        undefined,
         { asyncLogging: false }
       );
 
@@ -48,6 +49,7 @@ describe('Logger', () => {
         { category: 'test', components: ['component1', 'component2'] },
         { enabled: false, threshold: 0, timeframe: 0 },
         undefined,
+        undefined,
         { asyncLogging: false }
       );
 
@@ -62,6 +64,7 @@ describe('Logger', () => {
         LogLevel.WARNING, // Only WARNING and above
         { category: 'test', components: [] },
         { enabled: false, threshold: 0, timeframe: 0 },
+        undefined,
         undefined,
         { asyncLogging: false }
       );
@@ -84,6 +87,7 @@ describe('Logger', () => {
         { category: 'test', components: [] },
         { enabled: false, threshold: 0, timeframe: 0 },
         undefined,
+        undefined,
         { asyncLogging: false }
       );
 
@@ -102,6 +106,7 @@ describe('Logger', () => {
         LogLevel.EMERGENCY,
         { category: 'test', components: [] },
         { enabled: false, threshold: 0, timeframe: 0 },
+        undefined,
         undefined,
         { asyncLogging: false }
       );
@@ -123,6 +128,7 @@ describe('Logger', () => {
         LogLevel.DEBUG,
         { category: 'test', components: [] },
         { enabled: false, threshold: 0, timeframe: 0 },
+        undefined,
         undefined,
         { asyncLogging: false }
       );
@@ -148,6 +154,7 @@ describe('Logger', () => {
         { category: 'test', components: [] },
         floodControlConfig,
         undefined,
+        undefined,
         { asyncLogging: false }
       );
 
@@ -172,6 +179,7 @@ describe('Logger', () => {
         LogLevel.DEBUG,
         { category: 'test', components: [] },
         floodControlConfig,
+        undefined,
         undefined,
         { asyncLogging: false }
       );
@@ -207,6 +215,7 @@ describe('Logger', () => {
         { category: 'test', components: [] },
         floodControlConfig,
         undefined,
+        undefined,
         { asyncLogging: false }
       );
 
@@ -232,6 +241,7 @@ describe('Logger', () => {
         LogLevel.DEBUG,
         { category: 'test', components: [] },
         floodControlConfig,
+        undefined,
         undefined,
         { asyncLogging: false }
       );
@@ -262,6 +272,7 @@ describe('Logger', () => {
         { category: 'test', components: [] },
         floodControlConfig,
         undefined,
+        undefined,
         { asyncLogging: false }
       );
 
@@ -291,6 +302,7 @@ describe('Logger', () => {
         { category: 'test', components: [] },
         floodControlConfig,
         undefined,
+        undefined,
         { asyncLogging: false }
       );
 
@@ -315,6 +327,7 @@ describe('Logger', () => {
         LogLevel.DEBUG,
         { category: 'test', components: [] },
         floodControlConfig,
+        undefined,
         undefined,
         { asyncLogging: false }
       );
@@ -350,6 +363,7 @@ describe('Logger', () => {
         { category: 'test', components: [] },
         { enabled: false, threshold: 0, timeframe: 0 },
         undefined,
+        undefined,
         { asyncLogging: false }
       );
 
@@ -367,6 +381,7 @@ describe('Logger', () => {
         LogLevel.DEBUG,
         { category: 'test', components: [] },
         { enabled: false, threshold: 0, timeframe: 0 },
+        undefined,
         undefined,
         { asyncLogging: false }
       );
@@ -388,6 +403,7 @@ describe('Logger', () => {
         LogLevel.DEBUG,
         { category: 'test', components: [] },
         { enabled: false, threshold: 0, timeframe: 0 },
+        undefined,
         undefined,
         { asyncLogging: false }
       );
@@ -413,6 +429,7 @@ describe('Logger', () => {
         LogLevel.DEFAULT, // Use DEFAULT to allow all log levels
         { category: 'test', components: [] },
         { enabled: false, threshold: 0, timeframe: 0 },
+        undefined,
         undefined,
         { asyncLogging: false }
       );
@@ -477,6 +494,7 @@ describe('Logger', () => {
         { category: 'base', components: ['comp1'] },
         { enabled: false, threshold: 0, timeframe: 0 },
         undefined,
+        undefined,
         { asyncLogging: false }
       );
 
@@ -493,6 +511,7 @@ describe('Logger', () => {
         LogLevel.ERROR,
         { category: 'base', components: ['comp1'] },
         { enabled: true, threshold: 5, timeframe: 2000 },
+        undefined,
         undefined,
         { asyncLogging: false }
       );
@@ -536,6 +555,7 @@ describe('Logger', () => {
         { category: 'test', components: [] },
         { enabled: false, threshold: 0, timeframe: 0 },
         undefined,
+        undefined,
         { asyncLogging: false }
       );
 
@@ -552,6 +572,7 @@ describe('Logger', () => {
         { category: 'test', components: [] },
         { enabled: false, threshold: 0, timeframe: 0 },
         undefined,
+        undefined,
         { asyncLogging: false }
       );
 
@@ -565,6 +586,7 @@ describe('Logger', () => {
         LogLevel.DEBUG,
         { category: 'test', components: [] },
         { enabled: false, threshold: 0, timeframe: 0 },
+        undefined,
         undefined,
         { asyncLogging: false }
       );
@@ -580,6 +602,7 @@ describe('Logger', () => {
         { category: 'test', components: [] },
         { enabled: false, threshold: 0, timeframe: 0 },
         undefined,
+        undefined,
         { asyncLogging: false }
       );
 
@@ -593,6 +616,7 @@ describe('Logger', () => {
         LogLevel.DEBUG,
         { category: 'test', components: [] },
         { enabled: false, threshold: 0, timeframe: 0 },
+        undefined,
         undefined,
         { asyncLogging: false }
       );
@@ -619,6 +643,7 @@ describe('Logger', () => {
         LogLevel.DEBUG,
         { category: 'test', components: [] },
         { enabled: false, threshold: 0, timeframe: 0 },
+        undefined,
         writerOptions,
         { asyncLogging: false }
       );
@@ -637,6 +662,7 @@ describe('Logger', () => {
         LogLevel.INFO,
         { category: 'test', components: [] },
         { enabled: false, threshold: 0, timeframe: 0 },
+        undefined,
         undefined,
         { asyncLogging: true }
       );
@@ -669,6 +695,7 @@ describe('Logger', () => {
         LogLevel.INFO,
         { category: 'test', components: [] },
         { enabled: false, threshold: 0, timeframe: 0 },
+        undefined,
         undefined,
         { asyncLogging: true }
       );
@@ -705,6 +732,7 @@ describe('Logger', () => {
         LogLevel.INFO,
         { category: 'test', components: [] },
         { enabled: false, threshold: 0, timeframe: 0 },
+        undefined,
         undefined,
         { asyncLogging: true }
       );
@@ -774,6 +802,7 @@ describe('Logger', () => {
         LogLevel.DEBUG,
         { category: 'test', components: [] },
         { enabled: false, threshold: 0, timeframe: 0 },
+        undefined,
         undefined,
         { asyncLogging: true }
       );

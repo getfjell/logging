@@ -2,7 +2,8 @@ import { getLogger } from "./logging";
 
 export { getLogger };
 export type { Logger, TimeLogger } from "./Logger";
-export type { LoggingConfig } from "./config";
+export type { LoggingConfig, ComponentOverride } from "./config";
+export { resolveLogLevel } from "./config";
 export type { FloodControlConfig } from "./FloodControl";
 export * as LogLevel from "./LogLevel";
 export * as LogFormat from "./LogFormat";

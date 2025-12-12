@@ -3,10 +3,15 @@ import * as LogLevel from "./LogLevel";
 import { FloodControlConfig } from "./FloodControl";
 import { defaultMaskingConfig, MaskingConfig } from "./utils/maskSensitive";
 
+export type ComponentOverride = {
+  logLevel: LogLevel.Config;
+  components?: Record<string, ComponentOverride>;
+};
+
 export type LoggingConfig = {
   logFormat: LogFormat.Config;
   logLevel: LogLevel.Config;
-  overrides: Record<string, { logLevel: LogLevel.Config }>;
+  overrides: Record<string, ComponentOverride>;
   floodControl: FloodControlConfig;
   masking: MaskingConfig;
 };
@@ -26,12 +31,29 @@ export const defaultLoggingConfig: LoggingConfig = {
   masking: defaultMaskingConfig,
 }
 
+// Helper function to recursively convert component overrides
+const convertComponentOverride = (override: any): ComponentOverride => {
+  const result: ComponentOverride = {
+    logLevel: override.logLevel ? LogLevel.getConfig(override.logLevel) : defaultLogLevel
+  };
+
+  // Recursively convert nested component overrides
+  if (override.components && typeof override.components === 'object') {
+    result.components = {};
+    Object.entries(override.components).forEach(([componentName, componentOverride]: [string, any]) => {
+      result.components![componentName] = convertComponentOverride(componentOverride);
+    });
+  }
+
+  return result;
+};
+
 // When we read the config from the environment, we need to convert the overrides to the correct format
-export const convertOverrides = (overrides: any): Record<string, { logLevel: LogLevel.Config }> => {
-  const convertedOverrides: Record<string, { logLevel: LogLevel.Config }> = {};
+export const convertOverrides = (overrides: any): Record<string, ComponentOverride> => {
+  const convertedOverrides: Record<string, ComponentOverride> = {};
   if (overrides) {
     Object.entries(overrides).forEach(([key, value]: [string, any]) => {
-      convertedOverrides[key] = { logLevel: value.logLevel ? LogLevel.getConfig(value.logLevel) : defaultLogLevel };
+      convertedOverrides[key] = convertComponentOverride(value);
     });
   }
   return convertedOverrides;
@@ -53,6 +75,45 @@ export const convertConfig = (config: any): LoggingConfig => {
     },
   };
 }
+
+/**
+ * Resolves the log level for a given category and component path by walking
+ * the component hierarchy in the configuration.
+ *
+ * @param config - The logging configuration
+ * @param category - The logger category (e.g., '@fjell/cache')
+ * @param components - Array of component names (e.g., ['CacheWarmer', 'SubComponent'])
+ * @returns The resolved log level configuration
+ */
+export const resolveLogLevel = (
+  config: LoggingConfig,
+  category: string,
+  components: string[]
+): LogLevel.Config => {
+  let logLevel = config.logLevel;
+  const overrides = config.overrides;
+
+  // Check if there's a category-level override
+  if (!overrides || !overrides[category]) {
+    return logLevel;
+  }
+
+  // Start with the category override
+  let currentOverride: ComponentOverride = overrides[category];
+  logLevel = currentOverride.logLevel;
+
+  // Walk through the component hierarchy
+  for (const component of components) {
+    if (!currentOverride.components || !currentOverride.components[component]) {
+      // No more specific override found, use current level
+      break;
+    }
+    currentOverride = currentOverride.components[component];
+    logLevel = currentOverride.logLevel;
+  }
+
+  return logLevel;
+};
 
 export const configureLogging = (): LoggingConfig => {
   let config: any = {};

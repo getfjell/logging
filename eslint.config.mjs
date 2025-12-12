@@ -9,4 +9,11 @@ export default [
       "no-undefined": "off",
     },
   },
+  {
+    // Allow more parameters for createLogger function
+    files: ["src/Logger.ts"],
+    rules: {
+      "max-params": ["warn", 7],
+    },
+  },
 ];
