@@ -81,6 +81,45 @@ logger.info("Hello, world!");
 
 This would generate a log message that prints out `[INFO] - [@myproject/core] [my-component] [my-sub-component] Hello, world!`.
 
+## Hierarchical Component Log Levels
+
+You can configure different log levels for specific components within a package. This is useful when you want to debug a specific component without flooding your logs with messages from other components:
+
+````
+LOGGING_CONFIG=`
+{
+    "logLevel": "INFO",
+    "logFormat": "TEXT",
+    "overrides": {
+        "@myproject/core": {
+            "logLevel": "INFO",
+            "components": {
+                "CacheWarmer": { "logLevel": "DEBUG" },
+                "DatabasePool": { "logLevel": "WARNING" }
+            }
+        }
+    }
+}
+````
+
+With this configuration:
+- The `@myproject/core` package has a base log level of INFO
+- The `CacheWarmer` component will log at DEBUG level (more verbose)
+- The `DatabasePool` component will log at WARNING level (less verbose)
+- Other components in `@myproject/core` use the base INFO level
+
+You can nest components as deeply as needed:
+
+```typescript
+const baseLogger = LibLogger.getLogger('@myproject/core');
+const cacheLogger = baseLogger.get('CacheWarmer');
+const strategyLogger = cacheLogger.get('Strategy');
+
+// Each level can have its own log level configuration
+```
+
+See [HIERARCHICAL_LOG_LEVELS.md](./docs/HIERARCHICAL_LOG_LEVELS.md) for detailed documentation and examples.
+
 ## What methods are available on `logger`?
 
 * emergency (highest priority)

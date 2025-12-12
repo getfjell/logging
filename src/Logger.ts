@@ -4,6 +4,7 @@ import * as LogFormat from "./LogFormat";
 import { createWriter, WriterOptions } from "./Writer";
 import { createFormatter } from "./formatter";
 import { FloodControl, FloodControlConfig } from "./FloodControl";
+import { LoggingConfig, resolveLogLevel } from "./config";
 
 export interface TimeLogger {
   end: () => void;
@@ -31,6 +32,7 @@ export const createLogger = (
   logLevel: LogLevel.Config,
   coordinates: { category: string, components: string[] },
   floodControlConfig: FloodControlConfig,
+  loggingConfig?: LoggingConfig,
   writerOptions?: WriterOptions,
   options?: { asyncLogging?: boolean },
 ): Logger => {
@@ -279,10 +281,18 @@ export const createLogger = (
       return startTimeLogger(logLevel, coordinates, payload);
     },
     get: (...additionalComponents: string[]) => {
-      return createLogger(logFormat, logLevel, {
+      const newComponents = [...coordinates.components, ...additionalComponents];
+      
+      // Resolve the log level for the child logger with the full component path
+      let childLogLevel = logLevel;
+      if (loggingConfig) {
+        childLogLevel = resolveLogLevel(loggingConfig, coordinates.category, newComponents);
+      }
+      
+      return createLogger(logFormat, childLogLevel, {
         category: coordinates.category,
-        components: [...coordinates.components, ...additionalComponents],
-      }, floodControlConfig, writerOptions, options);
+        components: newComponents,
+      }, floodControlConfig, loggingConfig, writerOptions, options);
     },
     destroy: () => {
       try {
